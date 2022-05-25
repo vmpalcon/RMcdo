@@ -1,0 +1,43 @@
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the login of the site/application.
+// -----------------------------------------------------------------------------
+.login-box {
+  padding: 30px 40px;
+  max-width: 500px;
+  background-color: $theme-white;
+  margin: 0 auto;
+  position: absolute;
+  width: calc(100% - 80px);
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.06), 0 0px 2px rgba(0, 0, 0, 0.14);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  font-size: 14px;
+  @include breakpoint(max-md) {
+    width: calc(100% - 40px);
+    padding: 30px 20px;
+  }
+  input {
+    margin-bottom: 10px;
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+  .fp-btn {
+    margin-bottom: 20px;
+    a {
+      color: $theme-orange;
+    }
+  }
+  .login-logo {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .login-box-msg {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 20px;
+  }
+}

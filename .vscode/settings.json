@@ -1,0 +1,25 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[php]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "html.format.wrapLineLength": 100,
+  "liveSassCompile.settings.formats": [
+    {
+      "format": "expanded",
+      "extensionName": ".css",
+      "savePath": "~/../css/"
+    },
+    {
+      "extensionName": ".min.css",
+      "format": "compressed",
+      "savePath": "~/../css/"
+    }
+  ]
+}

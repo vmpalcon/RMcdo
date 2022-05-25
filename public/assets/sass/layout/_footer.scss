@@ -1,0 +1,79 @@
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the footer of the site/application.
+// -----------------------------------------------------------------------------
+.footer-menu {
+  padding: 10px 0px 20px 0px;
+  @include breakpoint(max-lg) {
+    display: none;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-flow: wrap;
+    li {
+      margin-right: 20px;
+      margin-bottom: 6px;
+      a {
+        color: $theme-gray2 !important;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 18px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+    }
+  }
+}
+.footer-copyright {
+  @include breakpoint(max-lg) {
+    display: none;
+  }
+  p {
+    color: $theme-gray2 !important;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+}
+
+/**
+* Scroll to top
+*/
+.scrollToTop {
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  color: $theme-white !important;
+  z-index: 28;
+  bottom: 20px;
+  right: 20px;
+  position: fixed;
+  border-radius: 100px;
+  -webkit-transform: translateY(150px);
+  -ms-transform: translateY(150px);
+  transform: translateY(150px);
+  background: $theme-orange;
+  text-align: center;
+  font-size: 16px;
+  opacity: 0;
+  transition: $transition;
+  &.active {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
+    transform: translateY(0);
+  }
+  img {
+    width: 100%;
+  }
+}
+
+#videoshowModal {
+  .modal-content {
+    border-radius: 0;
+  }
+}

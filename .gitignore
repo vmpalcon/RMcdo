@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+# dotenv
+.env
+.cache
+**/.DS_Store
