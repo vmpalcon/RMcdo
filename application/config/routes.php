@@ -53,8 +53,6 @@ $route['default_controller'] = 'home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = TRUE;
 
-$route['team-member/(:num)'] = 'team-member/view/$1';
-$route['category/(:num)'] = 'category/index/$1';
 $route['page/(:any)'] = 'page/index/$1';
 
 $route['admin'] = 'admin/login';
