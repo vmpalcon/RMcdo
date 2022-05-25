@@ -1,0 +1,29 @@
+// -----------------------------------------------------------------------------
+// This file contains very basic styles.
+// -----------------------------------------------------------------------------
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+a {
+  color: $theme-black;
+  text-decoration: none;
+
+  @include on-event {
+    color: $theme-black;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+%flex {
+  display: flex;
+  flex-wrap: wrap;
+}
