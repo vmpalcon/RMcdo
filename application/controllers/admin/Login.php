@@ -43,7 +43,7 @@ class Login extends CI_Controller
 
                 if(!$pw) {
                     
-                    $error = 'Invalid Account Password!';
+                    $error = 'Invalid Account Username/Password!';
                     $this->session->set_flashdata('error',$error);
                     redirect(base_url().'admin');
 

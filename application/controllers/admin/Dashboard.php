@@ -14,7 +14,9 @@ class Dashboard extends CI_Controller
 		$data['setting'] = $this->Model_common->get_setting_data();
 
 		//$data['total_category'] = $this->Model_dashboard->show_total_category();
-		
+		$data['total_users'] = $this->Model_dashboard->show_total_users();
+		$data['total_pending'] = $this->Model_dashboard->show_total_pendingpost();
+		$data['total_pages'] = $this->Model_dashboard->show_total_pages();
 
 		$this->load->view('admin/view_header',$data);
 		$this->load->view('admin/view_dashboard',$data);

@@ -18,6 +18,19 @@
     line-height: inherit;
   }
 }
+
+.btn-purple {
+  background: $theme-purple;
+  border: 1px solid $theme-purple;
+  box-sizing: border-box;
+  color: $theme-white !important;
+  &:hover,
+  &:focus {
+    background-color: #5566e5;
+    border: 1px solid #5566e5;
+  }
+}
+
 .btn-primary {
   background: $theme-orange;
   border: 1px solid $theme-orange;

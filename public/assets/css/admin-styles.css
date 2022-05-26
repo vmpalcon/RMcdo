@@ -530,6 +530,24 @@ input {
   outline: none !important;
 }
 
+select {
+  display: block;
+  width: 100%;
+  font-size: 1em;
+  padding: 14px 27px;
+  border-radius: 100px;
+  border: 1px solid #d1d1d1;
+  font-family: inherit;
+  /** for the dropdown indicator */
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+}
+
 textarea:focus,
 select:focus,
 .form-select:focus,
@@ -558,7 +576,7 @@ select {
 }
 
 /*** Modal ***/
-.modal .btn-close {
+.btn-customclose {
   background: url("data:image/svg+xml,%3Csvg viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M27.826 12.9654C27.826 12.7692 27.6635 12.6086 27.4649 12.6086L24.4861 12.622L19.9999 17.9059L15.5182 12.6265L12.5349 12.6131C12.3363 12.6131 12.1738 12.7692 12.1738 12.9698C12.1738 13.0545 12.2054 13.1348 12.2596 13.2017L18.1314 20.1131L12.2596 27.0201C12.205 27.0854 12.1748 27.1672 12.1738 27.2519C12.1738 27.4481 12.3363 27.6086 12.5349 27.6086L15.5182 27.5953L19.9999 22.3114L24.4816 27.5908L27.4604 27.6042C27.659 27.6042 27.8215 27.4481 27.8215 27.2475C27.8215 27.1627 27.7899 27.0825 27.7357 27.0156L21.8729 20.1086L27.7448 13.1972C27.7989 13.1348 27.826 13.0501 27.826 12.9654Z' fill='%238B8B8B'/%3E%3Cpath d='M20 0C8.95536 0 0 8.95536 0 20C0 31.0446 8.95536 40 20 40C31.0446 40 40 31.0446 40 20C40 8.95536 31.0446 0 20 0ZM20 36.6071C10.8304 36.6071 3.39286 29.1696 3.39286 20C3.39286 10.8304 10.8304 3.39286 20 3.39286C29.1696 3.39286 36.6071 10.8304 36.6071 20C36.6071 29.1696 29.1696 36.6071 20 36.6071Z' fill='%238B8B8B'/%3E%3C/svg%3E%0A");
   background-repeat: no-repeat;
   width: 40px;
@@ -569,8 +587,9 @@ select {
   margin-right: 15px;
   opacity: 1;
   outline: none;
-  -webkit-box-shadow: none;
-          box-shadow: none;
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+  border: 0;
 }
 
 /** Page Preloader **/
@@ -691,6 +710,19 @@ select {
     font-size: 14px;
     line-height: inherit;
   }
+}
+
+.btn-purple {
+  background: #6777ef;
+  border: 1px solid #6777ef;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color: #ffffff !important;
+}
+
+.btn-purple:hover, .btn-purple:focus {
+  background-color: #5566e5;
+  border: 1px solid #5566e5;
 }
 
 .btn-primary {
@@ -1294,7 +1326,7 @@ body {
 }
 
 .main-content .card .card-icon i {
-  font-size: 22px;
+  font-size: 34px;
   color: #ffffff;
 }
 
@@ -1417,17 +1449,26 @@ table {
   width: 100%;
 }
 
+table .chip-label {
+  font-size: 12px;
+}
+
 table .btngroup-action {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  text-align: center;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
 }
 
 table .btngroup-action a {
   margin-right: 5px;
-  font-size: 14px;
+  font-size: 12px;
   min-width: auto;
   padding: 3px 14px;
+  margin-bottom: 7px;
 }
 
 table .btngroup-action a:last-child {
@@ -1463,6 +1504,64 @@ table .btngroup-action a:last-child {
   max-height: 60px;
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.chip {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 3px 14px;
+  margin-right: 1rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #34395e;
+  border-radius: 0;
+  -webkit-transition: opacity 0.3s linear;
+  transition: opacity 0.3s linear;
+  word-wrap: break-word;
+  text-transform: none;
+  margin: 0;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.chip.color-red {
+  background-color: #ff3b30 !important;
+  color: #ffffff !important;
+}
+
+.chip.color-green {
+  background-color: #4cd964 !important;
+  color: #ffffff !important;
+}
+
+.chip.color-yellow {
+  background-color: #fbb927 !important;
+  color: #ffffff !important;
+}
+
+.chip .chip-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  -ms-flex-negative: 1;
+      flex-shrink: 1;
+  min-width: 0;
+}
+
+.main-content .card {
+  text-decoration: none !important;
 }
 
 .login-box {

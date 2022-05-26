@@ -32,7 +32,7 @@ $(document).ready(function () {
         }),
       ],
     });
-    $('#tablelist').DataTable({ dom: 'Bfrtip' });
+    $('#tablelist').DataTable();
   }
 });
 

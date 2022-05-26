@@ -220,6 +220,13 @@ body.modal-open {
           .rmc--profile-username {
             padding: 5px 20px 0px 20px;
             color: $theme-dark;
+            > a {
+              font-weight: bold;
+              > span {
+                font-size: 14px;
+                color: $theme-yellow;
+              }
+            }
           }
           .rmc--profile-title {
             padding: 3px 20px 20px 20px;
@@ -259,6 +266,21 @@ body.modal-open {
                 @include breakpoint(max-md) {
                   height: 460px;
                 }
+                .carousel {
+                  height: 100%;
+                  .carousel-inner {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    .carousel-item {
+                      height: 100%;
+                    }
+                  }
+                  .carousel-indicators {
+                    bottom: 0;
+                  }
+                }
+
                 .loader {
                   position: absolute;
                   left: 50%;
@@ -359,6 +381,12 @@ body.modal-open {
                     text-align: center;
                     margin-bottom: 20px;
                     position: relative;
+                    .rmc--snippet-text {
+                      position: absolute;
+                      top: 20px;
+                      left: 50%;
+                      transform: translate(-50%, 0);
+                    }
                     > a {
                       font-size: 11px;
                       font-weight: 400;
@@ -387,12 +415,6 @@ body.modal-open {
                           background-repeat: no-repeat;
                           width: 42px;
                         }
-                      }
-                      .rmc--snippet-text {
-                        position: absolute;
-                        top: 20px;
-                        left: 50%;
-                        transform: translate(-50%, 0);
                       }
                     }
                     a.active {
@@ -583,7 +605,8 @@ body.modal-open {
       padding-left: 30px;
       padding-right: 30px;
     }
-    .signupbtn {
+    .popsignupbtn,
+    .poploginbtn {
       a {
         color: $theme-orange;
       }
@@ -629,12 +652,18 @@ body.modal-open {
     margin: 0 auto;
   }
 }
-
-.rmc--login-view {
+.rmc--register-view {
+  display: none;
+}
+.rmc--login-view,
+.rmc--register-view {
   .row {
     @include breakpoint(max-md) {
       text-align: center;
     }
+  }
+  input {
+    margin-bottom: 10px;
   }
   .phone-title {
     padding-left: 30px;
@@ -652,38 +681,16 @@ body.modal-open {
       padding-bottom: 21px;
     }
   }
-  .sendcode-input {
-    margin-top: 30px;
-    > div {
-      position: relative;
-    }
-    .btn {
-      position: absolute;
-      height: 62px;
-      padding-left: 50px;
-      padding-right: 50px;
-      right: 0px;
-      width: 40%;
-      @include breakpoint(max-sm) {
-        width: auto;
-        padding-left: 40px;
-        padding-right: 40px;
-      }
-    }
-    input {
-      padding-top: 21px;
-      padding-bottom: 21px;
-    }
-  }
+
   .login-textfield {
-    padding-top: 30px;
-    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 0px;
   }
   .login-btnfield {
     padding-top: 10px;
     padding-bottom: 10px;
     .btn {
-      height: 59px;
+      height: 49px;
       padding-left: 50px;
       padding-right: 50px;
       width: 100%;
@@ -691,7 +698,7 @@ body.modal-open {
   }
 }
 .rmc--auth-mainleftpane {
-  display: none;
+  /* display: none; */
 }
 /**** AUTH PAGE ****/
 .rmc--auth-profile {
@@ -762,22 +769,15 @@ body.modal-open {
     margin-bottom: 10px;
     > div {
       flex: 1;
+      text-align: center;
     }
-    > div:first-child {
-    }
-    > div:nth-child(2) {
-      text-align: right;
-    }
-    > div:nth-child(3) {
-      text-align: right;
-    }
+
     span {
       font-weight: bold;
     }
   }
 }
 .header-auth-area {
-  display: none;
   .header-auth-wrap {
     display: flex;
     > ul {
@@ -863,7 +863,10 @@ body.modal-open {
       display: block;
 
       img {
-        height: 43px;
+        height: 46px;
+        width: 46px;
+        object-fit: cover;
+        border-radius: 10px;
       }
     }
     &:hover {
@@ -1688,5 +1691,125 @@ body.modal-open {
   }
   .carousel-indicators button {
     background-color: $theme-orangelight;
+  }
+}
+
+.birthdayfield {
+  display: flex;
+  margin-bottom: 10px;
+  > div {
+    flex: 1;
+    margin-right: 10px;
+  }
+  > div:last-child {
+    margin-right: 0;
+  }
+}
+.isrequired {
+  border: 1px solid $theme-red;
+}
+
+.timeline-preloader {
+  position: relative;
+  max-width: 800px;
+}
+.spinner {
+  width: 70px;
+  height: 70px;
+
+  border: 3px solid #f3f3f3;
+  border-top: 4px solid #f25a41;
+  border-radius: 100%;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.endtimeline {
+  text-align: center;
+}
+
+/**** Reaction ****/
+.likecheckbox {
+  .rmc--snippet-text {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: $theme-gray2;
+    position: relative;
+    display: block;
+  }
+
+  cursor: pointer;
+  .heart {
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  svg {
+    height: 25px;
+    fill: rgb(168, 170, 181);
+    transition: all 500ms ease-in-out;
+  }
+
+  svg:nth-child(2) {
+    position: absolute;
+    z-index: 2;
+  }
+
+  input {
+    display: none;
+  }
+
+  input:checked + .heart svg {
+    fill: red;
+  }
+
+  input:checked + .heart svg:nth-child(2) {
+    filter: opacity(1);
+    animation: heart 0.3s linear forwards;
+  }
+  &.smallsvg {
+    display: flex;
+    margin-right: 15px;
+    svg {
+      height: 15px;
+      display: flex;
+    }
+    .heart {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 100px;
+      margin-right: 8px;
+    }
+    .rmc--snippet-text {
+      font-size: 14px;
+      line-height: 35px;
+    }
+  }
+}
+
+@keyframes heart {
+  to {
+    transform: scale(1.4);
+    filter: opacity(0);
+    fill: red;
   }
 }

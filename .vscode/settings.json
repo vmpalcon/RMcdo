@@ -21,5 +21,6 @@
       "format": "compressed",
       "savePath": "~/../css/"
     }
-  ]
+  ],
+  "liveSassCompile.settings.excludeList": ["**/node_modules/**", ".vscode/**", "public/assets/vendor/**"]
 }

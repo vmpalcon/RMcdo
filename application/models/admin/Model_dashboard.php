@@ -9,5 +9,26 @@ class Model_dashboard extends CI_Model
         $query = $this->db->query($sql);
         return $query->num_rows();
     } */
-    
+    public function show_total_users()
+	{
+		$sql = 'SELECT id from tbl_user';
+        $query = $this->db->query($sql);
+        return $query->num_rows();
+    }
+    public function show_total_pendingpost()
+	{
+		//$sql = 'SELECT id from tbl_post';
+        $this->db->select("id");
+        $this->db->from("tbl_post");
+        $this->db->where("status='Pending'");
+        $query = $this->db->get();
+        //$query = $this->db->query($sql);
+        return $query->num_rows();
+    }
+    public function show_total_pages()
+	{
+		$sql = 'SELECT id from tbl_pages';
+        $query = $this->db->query($sql);
+        return $query->num_rows();
+    }
 }

@@ -5,7 +5,7 @@
 $('body').removeClass('bd-init');
 
 /*------------------------
-        Video Mousrover
+        Video Mouseover
     -----------------------------*/
 function mouseover(id) {
   var getid = document.getElementById(id);
@@ -39,10 +39,10 @@ function mouseout(id) {
   mediaPlayer = document.getElementById(id);
   mediaPlayer.pause();
 }
-
-var element = document.querySelector('.rmc--leftpane');
-var leftpane = new Optiscroll(element);
-
+if ($('.rmc--leftpane')[0]) {
+  var element = document.querySelector('.rmc--leftpane');
+  var leftpane = new Optiscroll(element);
+}
 var searchresult = new Optiscroll(document.getElementById('searchresult'), { forceScrollbars: true });
 
 $(document).on('click', '.btnlike', function (e) {
@@ -50,11 +50,146 @@ $(document).on('click', '.btnlike', function (e) {
   $(this).toggleClass('active');
 });
 
-$('#phoneField1').CcPicker({
-  countryCode: 'PH',
+$(document).on('click', '.popsignupbtn a', function (e) {
+  e.preventDefault();
+  $('.rmc--login-view').hide();
+  $('.rmc--register-view').show();
 });
-$('#phoneField1').on('countrySelect', function (e, i) {
-  console.log(i.countryName + ' ' + i.phoneCode);
+$(document).on('click', '.poploginbtn a', function (e) {
+  e.preventDefault();
+  $('.rmc--login-view').show();
+  $('.rmc--register-view').hide();
+});
+
+$('.rmc--login-view form').submit(function (e) {
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+
+  var form = $(this);
+  var actionUrl = form.attr('action');
+  rckymcdo.preloader('show');
+  $.ajax({
+    type: 'POST',
+    url: actionUrl,
+    data: form.serialize(), // serializes the form's elements.
+    success: function (data) {
+      console.log(data);
+
+      data = JSON.parse(data);
+      if (data.error == false) {
+        $('.loginmsgoutput').html(
+          `<div class="alert alert-success alert-dismissible fade show" role="alert">
+        ` +
+            data.message +
+            `
+        <button type="button" class="btn-close" data-bs-dismiss="alert"
+          aria-label="Close"></button>
+      </div>`,
+        );
+        //window.location.reload();
+        setTimeout(function () {
+          rckymcdo.preloader('hide');
+          if (data.redirect != undefined || data.redirect != null) {
+            location.href = data.redirect;
+          } else {
+            window.location.reload();
+          }
+        }, 2000);
+      } else {
+        rckymcdo.preloader('hide');
+        $('.loginmsgoutput').html(
+          `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+          ` +
+            data.message +
+            `
+          <button type="button" class="btn-close" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+        </div>`,
+        );
+      }
+    },
+  });
+});
+$('.rmc--register-view form').submit(function (e) {
+  e.preventDefault(); // avoid to execute the actual submit of the form.
+
+  var form = $(this);
+  var actionUrl = form.attr('action');
+  rckymcdo.preloader('show');
+  var month = $('.rmc--register-view #month').val(),
+    day = $('.rmc--register-view #day').val(),
+    year = $('.rmc--register-view #year').val(),
+    valid = 1;
+  if (month == 'month') {
+    valid = 0;
+    rckymcdo.preloader('hide');
+    $('.rmc--register-view #month').addClass('isrequired');
+  } else {
+    $('.rmc--register-view #month').removeClass('isrequired');
+  }
+  if (day == 'day') {
+    valid = 0;
+    rckymcdo.preloader('hide');
+    $('.rmc--register-view #day').addClass('isrequired');
+  } else {
+    $('.rmc--register-view #day').removeClass('isrequired');
+  }
+  if (year == 'year') {
+    valid = 0;
+    rckymcdo.preloader('hide');
+    $('.rmc--register-view #year').addClass('isrequired');
+  } else {
+    $('.rmc--register-view #year').removeClass('isrequired');
+  }
+  if ($('.rmc--register-view #email').val().length == 0) {
+    valid = 0;
+    rckymcdo.preloader('hide');
+    $('.rmc--register-view #email').addClass('isrequired');
+  } else {
+    $('.rmc--register-view #email').removeClass('isrequired');
+  }
+  if ($('.rmc--register-view input[name="password"]').val().length == 0) {
+    valid = 0;
+    rckymcdo.preloader('hide');
+    $('.rmc--register-view input[name="password"]').addClass('isrequired');
+  } else {
+    $('.rmc--register-view input[name="password"]').removeClass('isrequired');
+  }
+  if (valid == 1) {
+    $.ajax({
+      type: 'POST',
+      url: actionUrl,
+      data: form.serialize(), // serializes the form's elements.
+      success: function (data) {
+        data = JSON.parse(data);
+
+        if (data.error == false) {
+          console.log(data);
+          $('.rmc--register-view form')[0].reset();
+          rckymcdo.preloader('hide');
+          $('.registermsgoutput').html(
+            `<div class="alert alert-success alert-dismissible fade show" role="alert">
+        ` +
+              data.message +
+              `
+        <button type="button" class="btn-close" data-bs-dismiss="alert"
+          aria-label="Close"></button>
+      </div>`,
+          );
+        } else {
+          rckymcdo.preloader('hide');
+          $('.registermsgoutput').html(
+            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+          ` +
+              data.message +
+              `
+          <button type="button" class="btn-close" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+        </div>`,
+          );
+        }
+      },
+    });
+  }
 });
 $('.btnpostvideo').on('click', function (e) {
   rckymcdo.postvideo();
@@ -113,218 +248,60 @@ var rckymcdo = {
       isvideoimg: isvideoimg,
       postvideo: postvideo,
       imglist: imglist,
+      postvideoform: true,
     };
     rckymcdo.preloader('show');
-    if (isvideoimg == 'video') {
-      $('.rmc--rightpane.timeline').prepend(
-        `
-      <div class="rmc--video-card hidden">
-      <div class="rmc--profile">
-         <div><a href="#"><img src="` +
-          profilephoto +
-          `" alt=""></a></div>
-         <div>
-            <div class="rmc--profile-photo">
-               <div><a href="#"><img src="` +
-          profilephoto +
-          `"
-                        class="rmc--profile-userimg" alt=""></a></div>
-            </div>
-            <div class="rmc--profile-username" title="Justin Smith"><a
-                  href="#">` +
-          profilename +
-          `</a></div>
-            <div class="rmc--profile-title">` +
-          caption +
-          `</div>
-            <div class="rmc--video-timeline">
-               <div>
-                  <div class="rmc--video-wrap" data-filetype="` +
-          isvideoimg +
-          `">
-                     <div class="loader">
-                        <div class="loader-wheel"></div>
-                     </div>
-                     <video class="rmc--video" id="rmc-video-99" loop="" muted="muted"
-                        onmouseover="mouseover('rmc-video-99')"
-                        onmouseout="mouseout('rmc-video-99')" data-bs-toggle="modal"
-                        data-bs-target="#videoshowModal"
-                        data-source="` +
-          postvideo +
-          `">
-                        <source src="` +
-          postvideo +
-          `" type="video/mp4" playsinline>
-                     </video>
-                     <div class="rmc--video-tool">
 
-                        <div class="video-total-view">
-                           <i class="fas fa-play"></i> 0
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="rmc--profile-snippet">
-                  <div><a href="#" class="btn btn-primary">Follow</a></div>
-                  <div class="rmc--snippet-tool">
-                     <ul>
-                        <li><a href="javascript:void(0)" class="btnlike"><span
-                                 class="rmc--snippet-icon like"></span>
-                              <span class="rmc--snippet-text total-like">0</span></a>
-                        </li>
-                        <li><a href="javascript:void(0)"><span
-                                 class="rmc--snippet-icon comment"></span>
-                              <span
-                                 class="rmc--snippet-text total-comment">0</span></a>
-                        </li>
-                        <li><a href="javascript:void(0)"
-                              onclick="rckymcdo.share(this)"><span
-                                 class="rmc--snippet-icon share"></span>
-                              <span
-                                 class="rmc--snippet-text total-share">0</span></a>
-                           <div class="rmc--share">
-                              <ul>
-                                 <li><a href="javascript:void(0)"
-                                       class="embed">Embed</a>
-                                 </li>
-                                 <li><a href="javascript:void(0)"
-                                       class="sendtofriends">Send to friends</a></li>
-                                 <li><a href="javascript:void(0)" class="copylink"
-                                       onclick="rckymcdo.copylink(this)">Copy
-                                       Link</a></li>
-                                 <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Ftestblock.co%2Frmxmcdo&quote=Nature+really+hit+different"
-                                       target="_blank" class="sharetofb"
-                                       onclick="rckymcdo.closeshare(this)">Share
-                                       to Facebook</a>
-                                 </li>
-                                 <li><a href="https://www.linkedin.com/sharing/share-offsite?url=http%3A%2F%2Ftestblock.co%2Frmxmcdo"
-                                       target="_blank" class="sharetolinkedin"
-                                       onclick="rckymcdo.closeshare(this)">Share to
-                                       LinkedIn</a>
-                                 <li><a href="https://www.twitter.com/share?text=Nature+really+hit+different&url=http%3A%2F%2Ftestblock.co%2Frmxmcdo"
-                                       target="_blank" class="sharetotwitter"
-                                       onclick="rckymcdo.closeshare(this)">Share to
-                                       Twitter</a>
-                                 </li>
-                              </ul>
-                           </div>
-                        </li>
-                     </ul>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-      `,
-      );
-    } else {
-      console.log('image');
-      $('.rmc--rightpane.timeline').prepend(
-        `<div class="rmc--video-card">
-      <div class="rmc--profile">
-         <div><a href="#"><img src="` +
-          profilephoto +
-          `" alt=""></a></div>
-         <div>
-            <div class="rmc--profile-photo">
-               <div><a href="#"><img src="` +
-          profilephoto +
-          `"
-                        class="rmc--profile-userimg" alt=""></a></div>
-            </div>
-            <div class="rmc--profile-username" title="Justin Smith"><a
-                  href="#">` +
-          profilename +
-          `</a></div>
-            <div class="rmc--profile-title">` +
-          caption +
-          `</div>
-            <div class="rmc--video-timeline">
-               <div>
-                  <div class="rmc--video-wrap" data-filetype="` +
-          isvideoimg +
-          `">
-                     <img src="` +
-          imglist[0] +
-          `" alt="" data-bs-toggle="modal"
-                        data-bs-target="#videoshowModal"
-                        data-source="` +
-          imglist[0] +
-          `" />
-                     <div class="rmc--video-tool">
-                        &nbsp;
-                     </div>
-                  </div>
-               </div>
-               <div class="rmc--profile-snippet">
-                  <div><a href="#" class="btn btn-primary">Follow</a></div>
-                  <div class="rmc--snippet-tool">
-                     <ul>
-                        <li><a href="javascript:void(0)" class="btnlike"><span
-                                 class="rmc--snippet-icon like"></span>
-                              <span class="rmc--snippet-text total-like">0</span></a>
-                        </li>
-                        <li><a href="javascript:void(0)"><span
-                                 class="rmc--snippet-icon comment"></span>
-                              <span
-                                 class="rmc--snippet-text total-comment">0</span></a>
-                        </li>
-                        <li><a href="javascript:void(0)"
-                              onclick="rckymcdo.share(this)"><span
-                                 class="rmc--snippet-icon share"></span>
-                              <span
-                                 class="rmc--snippet-text total-share">0</span></a>
-                           <div class="rmc--share">
-                              <ul>
-                                 <li><a href="javascript:void(0)"
-                                       class="embed">Embed</a>
-                                 </li>
-                                 <li><a href="javascript:void(0)"
-                                       class="sendtofriends">Send to friends</a></li>
-                                 <li><a href="javascript:void(0)" class="copylink"
-                                       onclick="rckymcdo.copylink(this)">Copy
-                                       Link</a></li>
-                                 <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Ftestblock.co%2Frmxmcdo&quote=Nature+really+hit+different"
-                                       target="_blank" class="sharetofb"
-                                       onclick="rckymcdo.closeshare(this)">Share
-                                       to Facebook</a>
-                                 </li>
-                                 <li><a href="https://www.linkedin.com/sharing/share-offsite?url=http%3A%2F%2Ftestblock.co%2Frmxmcdo"
-                                       target="_blank" class="sharetolinkedin"
-                                       onclick="rckymcdo.closeshare(this)">Share to
-                                       LinkedIn</a>
-                                 <li><a href="https://www.twitter.com/share?text=Nature+really+hit+different&url=http%3A%2F%2Ftestblock.co%2Frmxmcdo"
-                                       target="_blank" class="sharetotwitter"
-                                       onclick="rckymcdo.closeshare(this)">Share to
-                                       Twitter</a>
-                                 </li>
-                              </ul>
-                           </div>
-                        </li>
-                     </ul>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>`,
-      );
+    var formData = new FormData();
+    var filesLength = document.getElementById('video_upload').files.length;
+    var title = $('#submit_post').find('input[name="caption"]').val(),
+      videotype = $('#submit_post').find('input[name="videotype"]').val(),
+      privacytype = $('#submit_post').find('select[name="privacytype"]').val();
+
+    formData.append('title', title);
+    formData.append('isvideoimg', videotype);
+    formData.append('privacytype', privacytype);
+    formData.append('postvideoform', true);
+    for (var i = 0; i < filesLength; i++) {
+      formData.append('files[]', document.getElementById('video_upload').files[i]);
     }
+
     $('.btndiscardvideo').prop('disabled', true);
     $('.btnpostvideo').prop('disabled', true);
     $('.btnpostvideo').addClass('button--loading');
-    setTimeout(function () {
-      $('.btnpostvideo').removeClass('button--loading');
-      $('.btndiscardvideo').prop('disabled', false);
-      $('.btnpostvideo').prop('disabled', false);
-      rckymcdo.openviewupload('#nav-home');
-      rckymcdo.preloader('hide');
-      rckymcdo.resetupload();
-      setTimeout(function () {
-        $('.rmc--video-card').removeClass('hidden');
-      }, 500);
-    }, 5000);
+    var form = $('#submit_post');
+    var actionUrl = form.attr('action');
+    console.log(actionUrl);
+    $.ajax({
+      type: 'POST',
+      url: actionUrl,
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function (data) {
+        $('.btnpostvideo').removeClass('button--loading');
+        $('.btndiscardvideo').prop('disabled', false);
+        $('.btnpostvideo').prop('disabled', false);
+
+        rckymcdo.preloader('hide');
+        rckymcdo.resetupload();
+
+        data = JSON.parse(data);
+        console.log(data);
+        if (data.error == false) {
+          $('.msgoutput').html(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+          Your post has been submitted. This post is subject for approval and will informed you once approved.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`);
+        } else {
+          $('.msgoutput').html(`<div class="msgform">` + data.message + `</div>`);
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
   },
   replacevideo: function () {
     var vid = document.getElementById('previewvideo');
@@ -441,13 +418,6 @@ var rckymcdo = {
   },
 };
 
-if (localStorage.getItem('rockymountainsxmcdo_auth') !== null) {
-  $('.rmc--auth-mainleftpane').show();
-  $('.header-auth-area').show();
-  $('.header-button-area').hide();
-  $('.rmc--login-widget').hide();
-  $('.rmc--leftpane-menu').hide();
-}
 // click outside element will close
 $(document).mouseup(function (e) {
   var searchcontainer = $('.header-search-wrap'),
@@ -567,151 +537,153 @@ $(function () {
   });
 });
 
-const input = document.getElementById('video_upload');
-const video = document.getElementById('previewvideo');
-const videoSource = document.createElement('source');
+if ($('#video_upload')[0]) {
+  const input = document.getElementById('video_upload');
+  const video = document.getElementById('previewvideo');
+  const videoSource = document.createElement('source');
 
-input.addEventListener('change', function (e) {
-  $('.info-star').html(`<div class="circular"> <div class="inner"></div>
+  input.addEventListener('change', function (e) {
+    $('.info-star').html(`<div class="circular"> <div class="inner"></div>
   <div class="number">100%</div> <div class="circle">
   <div class="bar left"> <div class="progress"></div> </div> <div class="bar right">
   <div class="progress"></div> </div>
-  </div> </div><div style="margin-top: 10px;">Uploading please wait...</div>`);
+  </div> </div><div style="margin-top: 10px;">Rendering video please wait...</div>`);
 
-  const numb = document.querySelector('.number');
-  let counter = 0;
-  const files = this.files || [];
-  var interval = setInterval(() => {
-    if (counter == 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        if (!files.length) return;
-        if (files.length > 1) {
-          var allfiles = e.target.files;
-          if (files.length >= 6) {
-            $('.info-star').html(
-              `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-            );
-            $('.msgoutput').html('<div class="msgform">Maximum 5 Photos or 1 per Video are allowed</div>');
-            return true;
-          }
-          var err = 0;
-          $('.videotype').val('image');
-          for (var i = 0, f; (f = allfiles[i]); i++) {
-            if (f.type == 'video/mp4') {
+    const numb = document.querySelector('.number');
+    let counter = 0;
+    const files = this.files || [];
+    var interval = setInterval(() => {
+      if (counter == 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          if (!files.length) return;
+          if (files.length > 1) {
+            var allfiles = e.target.files;
+            if (files.length >= 6) {
               $('.info-star').html(
                 `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
               );
-              $('.msgoutput').html(
-                '<div class="msgform">Error you cannot upload photo and video at the sametime and only 1 per video are allowed to upload.</div>',
-              );
-              $('.load-area').show();
-              $('.photopreview-area').find('.carousel-indicators').html('');
-              $('.photopreview-area').find('.carousel-inner').html('');
-              err = err + 1;
+              $('.msgoutput').html('<div class="msgform">Maximum 5 Photos or 1 per Video are allowed</div>');
               return true;
-            } else {
+            }
+            var err = 0;
+            $('.videotype').val('image');
+            for (var i = 0, f; (f = allfiles[i]); i++) {
+              if (f.type == 'video/mp4') {
+                $('.info-star').html(
+                  `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
+                );
+                $('.msgoutput').html(
+                  '<div class="msgform">Error you cannot upload photo and video at the sametime and only 1 per video are allowed to upload.</div>',
+                );
+                $('.load-area').show();
+                $('.photopreview-area').find('.carousel-indicators').html('');
+                $('.photopreview-area').find('.carousel-inner').html('');
+                err = err + 1;
+                return true;
+              } else {
+                $('.load-area').hide();
+                $('.msgoutput').html('');
+                var reader = new FileReader();
+                var count = 0;
+                reader.onload = function (event) {
+                  if (err == 0) {
+                    $('.carousel-indicators').append(
+                      `<button type="button" data-bs-target="#carouselRmxmcdo"
+              data-bs-slide-to="` +
+                        count +
+                        `" aria-current="true" aria-label="Slide 1"></button>`,
+                    );
+                    $('#carouselRmxmcdo')
+                      .find('.carousel-inner')
+                      .append(
+                        '<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>',
+                      );
+                    //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+                    $('.btnpostvideo').prop('disabled', false);
+                    $('.carousel-indicators button:first-child').addClass('active');
+                    $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
+                    count++;
+                  }
+                };
+
+                reader.readAsDataURL(e.target.files[i]);
+              }
+            }
+          } else {
+            var currfile = e.target.files[0];
+            console.log(currfile);
+            if (currfile.type == 'video/mp4' || currfile.type == 'video/webm') {
+              console.log('this is video');
+              $('.videotype').val('video');
+              $('.msgoutput').html('');
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                var newtitle = currfile.name.split('.')[0];
+                $('.videopreview-title').html(currfile.name);
+                if ($('input.txtcaption').val().length === 0) {
+                  $('input.txtcaption').val(newtitle);
+                }
+                $('.btnpostvideo').prop('disabled', false);
+                videoSource.setAttribute('src', e.target.result);
+                video.appendChild(videoSource);
+                video.load();
+                video.play();
+              };
+
+              reader.onprogress = function (e) {
+                console.log('progress: ', Math.round((e.loaded * 100) / e.total));
+              };
+
+              reader.readAsDataURL(files[0]);
+              $('.preview-area').addClass('active');
+              $('.load-area').hide();
+            } else if (currfile.type == 'image/png' || currfile.type == 'image/jpg' || currfile.type == 'image/gif') {
+              console.log('this is image');
+              $('.videotype').val('image');
               $('.load-area').hide();
               $('.msgoutput').html('');
               var reader = new FileReader();
               var count = 0;
               reader.onload = function (event) {
-                if (err == 0) {
-                  $('.carousel-indicators').append(
-                    `<button type="button" data-bs-target="#carouselRmxmcdo"
-              data-bs-slide-to="` +
-                      count +
-                      `" aria-current="true" aria-label="Slide 1"></button>`,
-                  );
-                  $('#carouselRmxmcdo')
-                    .find('.carousel-inner')
-                    .append(
-                      '<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>',
-                    );
-                  //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-                  $('.btnpostvideo').prop('disabled', false);
-                  $('.carousel-indicators button:first-child').addClass('active');
-                  $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
-                  count++;
+                $('.btnpostvideo').prop('disabled', false);
+                $('.carousel-indicators').append(
+                  `<button type="button" data-bs-target="#carouselRmxmcdo"
+          data-bs-slide-to="` +
+                    count +
+                    `" aria-current="true" aria-label="Slide 1"></button>`,
+                );
+                var newtitle = currfile.name.split('.')[0];
+                if ($('input.txtcaption').val().length === 0) {
+                  $('input.txtcaption').val(newtitle);
                 }
+                $('#carouselRmxmcdo')
+                  .find('.carousel-inner')
+                  .append('<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>');
+                //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+                $('.btnpostvideo').prop('disabled', false);
+                $('.carousel-indicators button:first-child').addClass('active');
+                $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
+                count++;
+                //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
               };
 
-              reader.readAsDataURL(e.target.files[i]);
+              reader.readAsDataURL(e.target.files[0]);
+            } else {
+              $('.info-star').html(
+                `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
+              );
+              $('.msgoutput').html('File not supported, please make sure to upload mp4, webm, jpg, gif, png');
             }
           }
-        } else {
-          var currfile = e.target.files[0];
-          console.log(currfile);
-          if (currfile.type == 'video/mp4' || currfile.type == 'video/webm') {
-            console.log('this is video');
-            $('.videotype').val('video');
-            $('.msgoutput').html('');
-            const reader = new FileReader();
-            reader.onload = function (e) {
-              var newtitle = currfile.name.split('.')[0];
-              $('.videopreview-title').html(currfile.name);
-              if ($('input.txtcaption').val().length === 0) {
-                $('input.txtcaption').val(newtitle);
-              }
-              $('.btnpostvideo').prop('disabled', false);
-              videoSource.setAttribute('src', e.target.result);
-              video.appendChild(videoSource);
-              video.load();
-              video.play();
-            };
-
-            reader.onprogress = function (e) {
-              console.log('progress: ', Math.round((e.loaded * 100) / e.total));
-            };
-
-            reader.readAsDataURL(files[0]);
-            $('.preview-area').addClass('active');
-            $('.load-area').hide();
-          } else if (currfile.type == 'image/png' || currfile.type == 'image/jpg' || currfile.type == 'image/gif') {
-            console.log('this is image');
-            $('.videotype').val('image');
-            $('.load-area').hide();
-            $('.msgoutput').html('');
-            var reader = new FileReader();
-            var count = 0;
-            reader.onload = function (event) {
-              $('.btnpostvideo').prop('disabled', false);
-              $('.carousel-indicators').append(
-                `<button type="button" data-bs-target="#carouselRmxmcdo"
-          data-bs-slide-to="` +
-                  count +
-                  `" aria-current="true" aria-label="Slide 1"></button>`,
-              );
-              var newtitle = currfile.name.split('.')[0];
-              if ($('input.txtcaption').val().length === 0) {
-                $('input.txtcaption').val(newtitle);
-              }
-              $('#carouselRmxmcdo')
-                .find('.carousel-inner')
-                .append('<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>');
-              //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-              $('.btnpostvideo').prop('disabled', false);
-              $('.carousel-indicators button:first-child').addClass('active');
-              $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
-              count++;
-              //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-            };
-
-            reader.readAsDataURL(e.target.files[0]);
-          } else {
-            $('.info-star').html(
-              `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-            );
-            $('.msgoutput').html('File not supported, please make sure to upload mp4, webm, jpg, gif, png');
-          }
-        }
-      }, 1500);
-    } else {
-      counter += 1;
-      numb.textContent = counter + '%';
-    }
-  }, 15);
-});
+        }, 1500);
+      } else {
+        counter += 1;
+        numb.textContent = counter + '%';
+      }
+    }, 15);
+  });
+}
 
 $('#videoshowModal').on('show.bs.modal', function (event) {
   $('.rmc--photovideo-source').html('');
@@ -747,6 +719,17 @@ $('#videoshowModal').on('hide.bs.modal', function (event) {
     vid.pause();
   }
 });
+$('#loginModal').on('show.bs.modal', function (event) {
+  var checkpage = $(event.relatedTarget).attr('data-src');
+  if (typeof checkpage !== 'undefined' && checkpage !== false) {
+    $('.rmc--login-view form').append('<input type="hidden" name="location_redirect" value="' + checkpage + '">');
+  }
+});
+$('#loginModal').on('hidden.bs.modal', function (event) {
+  $('.rmc--login-view').show();
+  $('.rmc--register-view').hide();
+  $('input[name="location_redirect"]').remove();
+});
 
 $('video.rmc--video')
   .bind('touchstart', function () {
@@ -761,5 +744,139 @@ $('video.rmc--video')
 $(document).ready(function () {
   $('.carousel').carousel({
     interval: 2000,
+  });
+});
+
+var Days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // index => month [0-11]
+$(document).ready(function () {
+  var option = '<option value="day">Day</option>';
+  var selectedDay = 'day';
+  for (var i = 1; i <= Days[0]; i++) {
+    //add option days
+    option += '<option value="' + i + '">' + i + '</option>';
+  }
+  $('#day').append(option);
+  $('#day').val(selectedDay);
+
+  var option = '<option value="month">Month</option>';
+  var selectedMon = 'month';
+  for (var i = 1; i <= 12; i++) {
+    option += '<option value="' + i + '">' + i + '</option>';
+  }
+  $('#month').append(option);
+  $('#month').val(selectedMon);
+
+  var option = '<option value="month">Month</option>';
+  var selectedMon = 'month';
+  for (var i = 1; i <= 12; i++) {
+    option += '<option value="' + i + '">' + i + '</option>';
+  }
+  $('#month2').append(option);
+  $('#month2').val(selectedMon);
+
+  var d = new Date();
+  var option = '<option value="year">Year</option>';
+  selectedYear = 'year';
+  for (var i = 1930; i <= d.getFullYear(); i++) {
+    // years start i
+    option += '<option value="' + i + '">' + i + '</option>';
+  }
+  $('#year').append(option);
+  $('#year').val(selectedYear);
+});
+function isLeapYear(year) {
+  year = parseInt(year);
+  if (year % 4 != 0) {
+    return false;
+  } else if (year % 400 == 0) {
+    return true;
+  } else if (year % 100 == 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function change_year(select) {
+  if (isLeapYear($(select).val())) {
+    Days[1] = 29;
+  } else {
+    Days[1] = 28;
+  }
+  if ($('#month').val() == 2) {
+    var day = $('#day');
+    var val = $(day).val();
+    $(day).empty();
+    var option = '<option value="day">Day</option>';
+    for (var i = 1; i <= Days[1]; i++) {
+      //add option days
+      option += '<option value="' + i + '">' + i + '</option>';
+    }
+    $(day).append(option);
+    if (val > Days[month]) {
+      val = 1;
+    }
+    $(day).val(val);
+  }
+}
+
+function change_month(select) {
+  var day = $('#day');
+  var val = $(day).val();
+  $(day).empty();
+  var option = '<option value="day">Day</option>';
+  var month = parseInt($(select).val()) - 1;
+  for (var i = 1; i <= Days[month]; i++) {
+    //add option days
+    option += '<option value="' + i + '">' + i + '</option>';
+  }
+  $(day).append(option);
+  if (val > Days[month]) {
+    val = 1;
+  }
+  $(day).val(val);
+}
+
+/**** POST ****/
+$(document).ready(function () {
+  var limit = 3;
+  var start = 0;
+  var action = 'inactive';
+
+  function load_data(limit, start) {
+    $.ajax({
+      url: 'home/fetch',
+      method: 'POST',
+      data: { limit: limit, start: start },
+      cache: false,
+      success: function (data) {
+        if (data == '') {
+          $('.timeline-preloader').hide();
+          $('.main-timeline').append('<div class="endtimeline"><h3>No More Result Found</h3></div>');
+          action = 'active';
+        } else {
+          $('.timeline-preloader').hide();
+          $('.main-timeline').append(data);
+
+          action = 'inactive';
+        }
+      },
+    });
+  }
+
+  if (action == 'inactive') {
+    action = 'active';
+    load_data(limit, start);
+  }
+
+  $(window).scroll(function () {
+    if ($(window).scrollTop() + $(window).height() > $('.timeline').height() && action == 'inactive') {
+      $('.timeline-preloader').show();
+      action = 'active';
+      start = start + limit;
+      setTimeout(function () {
+        load_data(limit, start);
+      }, 1000);
+    }
   });
 });

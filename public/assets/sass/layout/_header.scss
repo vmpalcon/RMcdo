@@ -38,6 +38,9 @@ header {
     @include breakpoint(max-md) {
       flex: 1;
     }
+    img {
+      height: 55px;
+    }
   }
   .header-search-wrap {
     display: flex;

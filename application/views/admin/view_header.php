@@ -1,3 +1,8 @@
+<?php
+if($this->session->userdata('role')=='User'){
+  redirect(base_url());
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,14 +65,28 @@
 			<span>Dashboard</span>
 		</a>
 	</li>
+	<li class="nav-item dropdown <?php if( ($class_name == 'users') ) {echo 'active';} ?>">
+        <a href="#" class="nav-link has-dropdown"><i class="fa fa-users"></i> <span>Users</span></a>
+        <ul class="dropdown-menu">
+          <li><a class="nav-link <?php if( ($segment_2 == 'users' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/users/add">Add User</a></li>
+          <li><a class="nav-link <?php if( ($segment_2 == 'users' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/users">Manage Users</a></li>
+        </ul>
+      </li>
+	<li class="nav-item dropdown <?php if( ($class_name == 'post') ) {echo 'active';} ?>">
+        <a href="#" class="nav-link has-dropdown"><i class="fa fa-photo-video"></i> <span>Posting</span></a>
+        <ul class="dropdown-menu">
+          <li><a class="nav-link <?php if( ($segment_2 == 'post' && $segment_3 == 'pending') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/post/pending">For Approval</a></li>
+          <li><a class="nav-link <?php if( ($segment_2 == 'post' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/post">All Post</a></li>
+        </ul>
+      </li>
 	<li class="nav-item dropdown <?php if( ($class_name == 'pages') ) {echo 'active';} ?>">
-        <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i> <span>Dynamic Pages</span></a>
+        <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i> <span>Pages</span></a>
         <ul class="dropdown-menu">
           <li><a class="nav-link <?php if( ($segment_2 == 'pages' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/pages/add">Add New Page</a></li>
           <li><a class="nav-link <?php if( ($segment_2 == 'pages' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/pages">Manage Pages</a></li>
         </ul>
       </li>
-	<li class="menu-header">Settings &amp; Language <?php echo $segment_3; ?></li>
+	<li class="menu-header">General Settings </li>
 	<li class="nav-item <?php if( ($class_name == 'setting') ) {echo 'active';} ?>">
 		<a href="<?php echo base_url(); ?>admin/setting">
 			 <i class="fa fa-cog"></i> <span>Settings</span>
