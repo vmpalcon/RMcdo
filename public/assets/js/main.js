@@ -3,7 +3,11 @@
  * Copyright © 2022 Purplepatch Services LLC.
  */
 $('body').removeClass('bd-init');
-
+let passwordStrength = document.getElementById('password-strength');
+let lowUpperCase = document.querySelector('.low-upper-case i');
+let number = document.querySelector('.one-number i');
+let specialChar = document.querySelector('.one-special-char i');
+let eightChar = document.querySelector('.eight-character i');
 /*------------------------
         Video Mouseover
     -----------------------------*/
@@ -39,6 +43,60 @@ function mouseout(id) {
   mediaPlayer = document.getElementById(id);
   mediaPlayer.pause();
 }
+/*-------------------
+   Check Mime file type
+-------------------------*/
+function loadMime(file, callback) {
+  var mimes = [
+    {
+      mime: 'image/jpeg',
+      pattern: [0xff, 0xd8, 0xff],
+      mask: [0xff, 0xff, 0xff],
+    },
+    {
+      mime: 'image/png',
+      pattern: [0x89, 0x50, 0x4e, 0x47],
+      mask: [0xff, 0xff, 0xff, 0xff],
+    },
+    {
+      mime: 'image/gif',
+      pattern: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61],
+      mask: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
+    },
+    {
+      mime: 'image/gif',
+      pattern: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61],
+      mask: [0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
+    },
+    // you can expand this list @see https://mimesniff.spec.whatwg.org/#matching-an-image-type-pattern
+  ];
+
+  function check(bytes, mime) {
+    for (var i = 0, l = mime.mask.length; i < l; ++i) {
+      if ((bytes[i] & mime.mask[i]) - mime.pattern[i] !== 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  var blob = file.slice(0, 4); //read the first 4 bytes of the file
+
+  var reader = new FileReader();
+  reader.onloadend = function (e) {
+    if (e.target.readyState === FileReader.DONE) {
+      var bytes = new Uint8Array(e.target.result);
+
+      for (var i = 0, l = mimes.length; i < l; ++i) {
+        if (check(bytes, mimes[i])) return callback({ mimetype: mimes[i].mime, mimefile: file });
+      }
+
+      return callback('unknown');
+    }
+  };
+  reader.readAsArrayBuffer(blob);
+}
+
 if ($('.rmc--leftpane')[0]) {
   var element = document.querySelector('.rmc--leftpane');
   var leftpane = new Optiscroll(element);
@@ -110,12 +168,12 @@ $('.rmc--login-view form').submit(function (e) {
   });
 });
 $('.rmc--register-view form').submit(function (e) {
-  e.preventDefault(); // avoid to execute the actual submit of the form.
+  e.preventDefault();
 
   var form = $(this);
   var actionUrl = form.attr('action');
-  rckymcdo.preloader('show');
-  var month = $('.rmc--register-view #month').val(),
+  var totalvalid = 0;
+  /*var month = $('.rmc--register-view #month').val(),
     day = $('.rmc--register-view #day').val(),
     year = $('.rmc--register-view #year').val(),
     valid = 1;
@@ -139,22 +197,78 @@ $('.rmc--register-view form').submit(function (e) {
     $('.rmc--register-view #year').addClass('isrequired');
   } else {
     $('.rmc--register-view #year').removeClass('isrequired');
+  }*/
+
+  if ($('.rmc--register-view input[name="firstname"]').val().length == 0) {
+    valid = 0;
+
+    $('.rmc--register-view input[name="firstname"]').addClass('isrequired');
+  } else {
+    totalvalid = totalvalid + 1;
+    $('.rmc--register-view input[name="firstname"]').removeClass('isrequired');
+  }
+  if ($('.rmc--register-view input[name="lastname"]').val().length == 0) {
+    valid = 0;
+
+    $('.rmc--register-view input[name="lastname"]').addClass('isrequired');
+  } else {
+    totalvalid = totalvalid + 1;
+    $('.rmc--register-view input[name="lastname"]').removeClass('isrequired');
+  }
+  if ($('.rmc--register-view input[name="username"]').val().length == 0) {
+    valid = 0;
+
+    $('.rmc--register-view input[name="username"]').addClass('isrequired');
+  } else {
+    var expr = /^[a-zA-Z0-9._]*$/;
+    if (!expr.test($('.rmc--register-view input[name="username"]').val())) {
+      valid = 0;
+      $('.rmc--register-view input[name="username"]').addClass('isrequired');
+      $('.username-error-field').append(
+        '<div class="username-error ">Only Alphabets, Numbers, Dot and Underscore allowed in Username.</div>',
+      );
+    } else {
+      totalvalid = totalvalid + 1;
+      $('.rmc--register-view input[name="username"]').removeClass('isrequired');
+      $('.username-error').remove();
+    }
   }
   if ($('.rmc--register-view #email').val().length == 0) {
     valid = 0;
-    rckymcdo.preloader('hide');
+
     $('.rmc--register-view #email').addClass('isrequired');
   } else {
+    totalvalid = totalvalid + 1;
     $('.rmc--register-view #email').removeClass('isrequired');
   }
   if ($('.rmc--register-view input[name="password"]').val().length == 0) {
     valid = 0;
-    rckymcdo.preloader('hide');
+
     $('.rmc--register-view input[name="password"]').addClass('isrequired');
   } else {
-    $('.rmc--register-view input[name="password"]').removeClass('isrequired');
+    totalvalid = totalvalid + 1;
+
+    var passstr = $('#password-strength').attr('data-strength');
+    if (passstr == 100) {
+      totalvalid = totalvalid + 1;
+      $('.rmc--register-view input[name="password"]').removeClass('isrequired');
+    } else {
+      valid = 0;
+      $('.rmc--register-view input[name="password"]').addClass('isrequired');
+    }
+  }
+  if ($('.rmc--register-view input[name="confirmpassword"]').val().length == 0) {
+    valid = 0;
+    $('.rmc--register-view input[name="confirmpassword"]').addClass('isrequired');
+  } else {
+    $('.rmc--register-view input[name="confirmpassword"]').removeClass('isrequired');
+  }
+  console.log('total valid: ' + totalvalid);
+  if (totalvalid == 6) {
+    valid = 1;
   }
   if (valid == 1) {
+    rckymcdo.preloader('show');
     $.ajax({
       type: 'POST',
       url: actionUrl,
@@ -165,6 +279,17 @@ $('.rmc--register-view form').submit(function (e) {
         if (data.error == false) {
           console.log(data);
           $('.rmc--register-view form')[0].reset();
+          $('#password-strength').removeClass('progress-bar-warning progress-bar-success progress-bar-danger');
+          $('#password-strength').attr('style', 'width: 0%');
+          $('#password-strength').attr('data-strength', '0');
+          eightChar.classList.add('fa-circle');
+          eightChar.classList.remove('fa-check');
+          specialChar.classList.add('fa-circle');
+          specialChar.classList.remove('fa-check');
+          number.classList.add('fa-circle');
+          number.classList.remove('fa-check');
+          lowUpperCase.classList.add('fa-circle');
+          lowUpperCase.classList.remove('fa-check');
           rckymcdo.preloader('hide');
           $('.registermsgoutput').html(
             `<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -187,6 +312,10 @@ $('.rmc--register-view form').submit(function (e) {
         </div>`,
           );
         }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        rckymcdo.preloader('hide');
+        console.log(errorThrown);
       },
     });
   }
@@ -216,6 +345,11 @@ function itemExists(haystack, needle) {
 }
 
 var rckymcdo = {
+  resetfileupload: function () {
+    $('.info-star').html(
+      `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
+    );
+  },
   search: function (objects, title) {
     var results = [];
     toSearch = trimString(title); // trim it
@@ -309,9 +443,7 @@ var rckymcdo = {
     $('#previewvideo').html('');
     $('.load-area').show();
     $('.preview-area').removeClass('active');
-    $('.info-star').html(
-      `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-    );
+    rckymcdo.resetfileupload();
     $('.photopreview-area').find('.carousel-indicators').html('');
     $('.photopreview-area').find('.carousel-inner').html('');
     $('#alertreplaceModal').modal('hide');
@@ -323,9 +455,7 @@ var rckymcdo = {
     $('#previewvideo').html('');
     $('.load-area').show();
     $('.preview-area').removeClass('active');
-    $('.info-star').html(
-      `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-    );
+    rckymcdo.resetfileupload();
     $('.btnpostvideo').prop('disabled', true);
     $('.photopreview-area').find('.carousel-indicators').html('');
     $('.photopreview-area').find('.carousel-inner').html('');
@@ -547,7 +677,7 @@ if ($('#video_upload')[0]) {
   <div class="number">100%</div> <div class="circle">
   <div class="bar left"> <div class="progress"></div> </div> <div class="bar right">
   <div class="progress"></div> </div>
-  </div> </div><div style="margin-top: 10px;">Rendering video please wait...</div>`);
+  </div> </div><div style="margin-top: 10px;">Rendering video/photo please wait...</div>`);
 
     const numb = document.querySelector('.number');
     let counter = 0;
@@ -560,30 +690,23 @@ if ($('#video_upload')[0]) {
           if (files.length > 1) {
             var allfiles = e.target.files;
             if (files.length >= 6) {
-              $('.info-star').html(
-                `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-              );
+              rckymcdo.resetfileupload();
+
               $('.msgoutput').html('<div class="msgform">Maximum 5 Photos or 1 per Video are allowed</div>');
+              document.getElementById('video_upload').value = '';
               return true;
             }
             var err = 0;
             $('.videotype').val('image');
+            var filerr = 0;
+            $('.photopreview-area').hide();
             for (var i = 0, f; (f = allfiles[i]); i++) {
-              if (f.type == 'video/mp4') {
-                $('.info-star').html(
-                  `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-                );
-                $('.msgoutput').html(
-                  '<div class="msgform">Error you cannot upload photo and video at the sametime and only 1 per video are allowed to upload.</div>',
-                );
-                $('.load-area').show();
-                $('.photopreview-area').find('.carousel-indicators').html('');
-                $('.photopreview-area').find('.carousel-inner').html('');
-                err = err + 1;
-                return true;
-              } else {
-                $('.load-area').hide();
-                $('.msgoutput').html('');
+              if (f.type == 'image/png' || f.type == 'image/jpg' || f.type == 'image/jpeg' || f.type == 'image/gif') {
+                loadMime(f, function (mime) {
+                  if (mime == 'unknown') {
+                    filerr += 1;
+                  }
+                });
                 var reader = new FileReader();
                 var count = 0;
                 reader.onload = function (event) {
@@ -599,20 +722,53 @@ if ($('#video_upload')[0]) {
                       .append(
                         '<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>',
                       );
-                    //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-                    $('.btnpostvideo').prop('disabled', false);
                     $('.carousel-indicators button:first-child').addClass('active');
-                    $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
+                    $('#carouselRmxmcdo').find('.carousel-inner > .carousel-item:first-child').addClass('active');
+                    //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+
                     count++;
                   }
                 };
 
-                reader.readAsDataURL(e.target.files[i]);
+                reader.readAsDataURL(f);
+              } else if (f.type == 'video/mp4' || f.type == 'video/webm') {
+                rckymcdo.resetfileupload();
+                $('.msgoutput').html(
+                  '<div class="msgform">Error you cannot upload photo and video at the sametime and only 1 per video are allowed to upload.</div>',
+                );
+                document.getElementById('video_upload').value = '';
+                $('.load-area').show();
+                $('.photopreview-area').find('.carousel-indicators').html('');
+                $('.photopreview-area').find('.carousel-inner').html('');
+                err = err + 1;
+                return true;
+              } else {
+                rckymcdo.resetfileupload();
+                $('.msgoutput').html('<div class="msgform">File not supported, please make sure to upload mp4, webm, jpg, gif, png</div>');
               }
             }
+
+            setTimeout(function () {
+              console.log(e.target.files);
+              $('.photopreview-area').show();
+              if (filerr == 0) {
+                $('.load-area').hide();
+                $('.msgoutput').html('');
+                $('.btnpostvideo').prop('disabled', false);
+              } else {
+                $('.btnpostvideo').prop('disabled', true);
+                console.log(filerr);
+                rckymcdo.resetfileupload();
+                $('.msgoutput').html('<div class="msgform">Invalid file signature detected.</div>');
+                $('.photopreview-area').show();
+                $('.carousel-indicators').html('');
+                $('.carousel-inner').html('');
+                document.getElementById('video_upload').value = '';
+              }
+            }, 2000);
           } else {
             var currfile = e.target.files[0];
-            console.log(currfile);
+
             if (currfile.type == 'video/mp4' || currfile.type == 'video/webm') {
               console.log('this is video');
               $('.videotype').val('video');
@@ -638,42 +794,55 @@ if ($('#video_upload')[0]) {
               reader.readAsDataURL(files[0]);
               $('.preview-area').addClass('active');
               $('.load-area').hide();
-            } else if (currfile.type == 'image/png' || currfile.type == 'image/jpg' || currfile.type == 'image/gif') {
-              console.log('this is image');
-              $('.videotype').val('image');
-              $('.load-area').hide();
-              $('.msgoutput').html('');
-              var reader = new FileReader();
-              var count = 0;
-              reader.onload = function (event) {
-                $('.btnpostvideo').prop('disabled', false);
-                $('.carousel-indicators').append(
-                  `<button type="button" data-bs-target="#carouselRmxmcdo"
+            } else if (
+              currfile.type == 'image/png' ||
+              currfile.type == 'image/jpg' ||
+              currfile.type == 'image/jpeg' ||
+              currfile.type == 'image/gif'
+            ) {
+              loadMime(currfile, function (mime) {
+                if (mime == 'unknown') {
+                  rckymcdo.resetfileupload();
+                  $('.msgoutput').html('<div class="msgform">Invalid file signature detected.</div>');
+                  document.getElementById('video_upload').value = '';
+                } else {
+                  console.log('this is image');
+                  $('.videotype').val('image');
+                  $('.load-area').hide();
+                  $('.msgoutput').html('');
+                  var reader = new FileReader();
+                  var count = 0;
+                  reader.onload = function (event) {
+                    $('.btnpostvideo').prop('disabled', false);
+                    $('.carousel-indicators').append(
+                      `<button type="button" data-bs-target="#carouselRmxmcdo"
           data-bs-slide-to="` +
-                    count +
-                    `" aria-current="true" aria-label="Slide 1"></button>`,
-                );
-                var newtitle = currfile.name.split('.')[0];
-                if ($('input.txtcaption').val().length === 0) {
-                  $('input.txtcaption').val(newtitle);
-                }
-                $('#carouselRmxmcdo')
-                  .find('.carousel-inner')
-                  .append('<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>');
-                //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-                $('.btnpostvideo').prop('disabled', false);
-                $('.carousel-indicators button:first-child').addClass('active');
-                $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
-                count++;
-                //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
-              };
+                        count +
+                        `" aria-current="true" aria-label="Slide 1"></button>`,
+                    );
+                    var newtitle = currfile.name.split('.')[0];
+                    if ($('input.txtcaption').val().length === 0) {
+                      $('input.txtcaption').val(newtitle);
+                    }
+                    $('#carouselRmxmcdo')
+                      .find('.carousel-inner')
+                      .append(
+                        '<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>',
+                      );
+                    //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+                    $('.btnpostvideo').prop('disabled', false);
+                    $('.carousel-indicators button:first-child').addClass('active');
+                    $('#carouselRmxmcdo').find('.carousel-inner .carousel-item:first-child').addClass('active');
+                    count++;
+                    //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+                  };
 
-              reader.readAsDataURL(e.target.files[0]);
+                  reader.readAsDataURL(e.target.files[0]);
+                }
+              });
             } else {
-              $('.info-star').html(
-                `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-              );
-              $('.msgoutput').html('File not supported, please make sure to upload mp4, webm, jpg, gif, png');
+              rckymcdo.resetfileupload();
+              $('.msgoutput').html('<div class="msgform">File not supported, please make sure to upload mp4, webm, jpg, gif, png</div>');
             }
           }
         }, 1500);
@@ -746,7 +915,7 @@ $(document).ready(function () {
     interval: 2000,
   });
 });
-
+/*
 var Days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // index => month [0-11]
 $(document).ready(function () {
   var option = '<option value="day">Day</option>';
@@ -836,7 +1005,7 @@ function change_month(select) {
   }
   $(day).val(val);
 }
-
+*/
 /**** POST ****/
 $(document).ready(function () {
   var limit = 3;
@@ -880,3 +1049,95 @@ $(document).ready(function () {
     }
   });
 });
+
+$('.toggle-password').click(function () {
+  $(this).toggleClass('fa-eye fa-eye-slash');
+  var input = $($(this).parent().find('input'));
+  if (input.attr('type') == 'password') {
+    input.attr('type', 'text');
+  } else {
+    input.attr('type', 'password');
+  }
+});
+
+let state = false;
+
+$('.rmc--register-view input[name="password"]').on('keyup', function () {
+  let pass = $(this).val();
+  checkStrength(pass);
+  console.log(pass);
+});
+function checkStrength(password) {
+  let strength = 0;
+
+  //If password contains both lower and uppercase characters
+  if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) {
+    strength += 1;
+    lowUpperCase.classList.remove('fa-circle');
+    lowUpperCase.classList.add('fa-check');
+  } else {
+    lowUpperCase.classList.add('fa-circle');
+    lowUpperCase.classList.remove('fa-check');
+  }
+  //If it has numbers and characters
+  if (password.match(/([0-9])/)) {
+    strength += 1;
+    number.classList.remove('fa-circle');
+    number.classList.add('fa-check');
+  } else {
+    number.classList.add('fa-circle');
+    number.classList.remove('fa-check');
+  }
+  //If it has one special character
+  if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) {
+    strength += 1;
+    specialChar.classList.remove('fa-circle');
+    specialChar.classList.add('fa-check');
+  } else {
+    specialChar.classList.add('fa-circle');
+    specialChar.classList.remove('fa-check');
+  }
+  //If password is greater than 7
+  if (password.length > 7) {
+    strength += 1;
+    eightChar.classList.remove('fa-circle');
+    eightChar.classList.add('fa-check');
+  } else {
+    eightChar.classList.add('fa-circle');
+    eightChar.classList.remove('fa-check');
+  }
+
+  // If value is less than 2
+  console.log(strength);
+  if (strength == 0) {
+    passwordStrength.classList.remove('progress-bar-warning');
+    passwordStrength.classList.remove('progress-bar-success');
+    passwordStrength.classList.remove('progress-bar-danger');
+    passwordStrength.style = 'width: 0%';
+    $('#password-strength').attr('data-strength', '0');
+  } else if (strength == 1) {
+    passwordStrength.classList.remove('progress-bar-warning');
+    passwordStrength.classList.remove('progress-bar-success');
+    passwordStrength.classList.add('progress-bar-danger');
+    passwordStrength.style = 'width: 10%';
+    $('#password-strength').attr('data-strength', '10');
+  } else if (strength == 2) {
+    passwordStrength.classList.remove('progress-bar-warning');
+    passwordStrength.classList.remove('progress-bar-success');
+    passwordStrength.classList.add('progress-bar-danger');
+    passwordStrength.style = 'width: 30%';
+    $('#password-strength').attr('data-strength', '30');
+  } else if (strength == 3) {
+    passwordStrength.classList.remove('progress-bar-success');
+    passwordStrength.classList.remove('progress-bar-danger');
+    passwordStrength.classList.add('progress-bar-warning');
+    passwordStrength.style = 'width: 60%';
+    $('#password-strength').attr('data-strength', '60');
+  } else if (strength == 4) {
+    passwordStrength.classList.remove('progress-bar-warning');
+    passwordStrength.classList.remove('progress-bar-danger');
+    passwordStrength.classList.add('progress-bar-success');
+    passwordStrength.style = 'width: 100%';
+    $('#password-strength').attr('data-strength', '100');
+  }
+}

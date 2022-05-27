@@ -56,8 +56,7 @@ if(!$this->session->userdata('id')) {
                             data-bs-toggle="tab">Favicon</a></li>
                     <li class="nav-item"><a href="#tab_email" class="nav-link"
                             data-bs-toggle="tab">Mail Settings</a></li>
-                    <li class="nav-item"><a href="#tab_language" class="nav-link"
-                            data-bs-toggle="tab">Language</a></li>
+
                     <li class="nav-item"><a href="#tab_other" class="nav-link"
                             data-bs-toggle="tab">General Settings</a></li>
                 </ul>
@@ -228,43 +227,6 @@ if(!$this->session->userdata('id')) {
                         </div>
                         <?php echo form_close(); ?>
                     </div>
-
-
-
-
-
-                    <div class="tab-pane" id="tab_language">
-                        <?php echo form_open(base_url().'admin/setting/update',array('class' => 'form-horizontal')); ?>
-                        <div class="box box-info">
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label for="" class="col-sm-2 control-label">Language Option?
-                                    </label>
-                                    <div class="col-sm-3">
-                                        <select name="language_status" class="form-control select2">
-                                            <option value="Show" <?php
-                                                if($setting['language_status']=='Show' )
-                                                {echo 'selected' ;} ?>>Show</option>
-                                            <option value="Hide" <?php
-                                                if($setting['language_status']=='Hide' )
-                                                {echo 'selected' ;} ?>>Hide</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-success pull-left"
-                                            name="form_language">Update</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php echo form_close(); ?>
-                    </div>
-
-
-
 
 
                     <div class="tab-pane" id="tab_other">

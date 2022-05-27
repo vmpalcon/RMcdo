@@ -50,9 +50,29 @@ class Model_home extends CI_Model
     function check_email($email) 
 	{
 
-		$this->db->select('*');
+		$this->db->select('id,email,username');
 		$this->db->from('tbl_user');
 		$this->db->where("(email='".$email."' OR username='".$email."')");
+		$query = $this->db->get();
+		return $query->first_row('array');
+    }
+
+    function check_onlyemail($email) 
+	{
+
+		$this->db->select('id,email,username');
+		$this->db->from('tbl_user');
+		$this->db->where("email='".$email."'");
+		$query = $this->db->get();
+		return $query->first_row('array');
+    }
+    
+    function check_username($username) 
+	{
+
+		$this->db->select('id,email,username');
+		$this->db->from('tbl_user');
+		$this->db->where("username='".$username."'");
 		$query = $this->db->get();
 		return $query->first_row('array');
     }

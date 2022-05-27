@@ -3,6 +3,53 @@
  * Copyright © 2022 Purplepatch Services LLC.
  */
 $('body').removeClass('bd-init');
+var rckymcdoadmin = {
+  preloader: function (val) {
+    if (val == 'show') {
+      $('.linear-activity').show();
+    } else if (val == 'hide') {
+      $('.linear-activity').hide();
+    } else {
+      alert('Unknow value: ' + val);
+    }
+  },
+};
+/*------------------------
+        Video Mouseover
+    -----------------------------*/
+function mouseover(id) {
+  var getid = document.getElementById(id);
+  var mediaPlayer;
+  let slowInternetTimeout = null;
+  let threshold = 500;
+
+  getid.addEventListener('waiting', () => {
+    slowInternetTimeout = setTimeout(() => {
+      $('.loader' + id).removeClass('d-none');
+    }, threshold);
+  });
+  getid.addEventListener('playing', () => {
+    if (slowInternetTimeout != null) {
+      clearTimeout(slowInternetTimeout);
+      slowInternetTimeout = null;
+    }
+  });
+  getid.addEventListener('canplay', () => {
+    $('.loader' + id).addClass('d-none');
+  });
+  mediaPlayer = getid;
+  mediaPlayer.play();
+}
+
+/*-------------------
+              Video Mouseout
+          -------------------------*/
+function mouseout(id) {
+  var mediaPlayer;
+  mediaPlayer = document.getElementById(id);
+  mediaPlayer.pause();
+}
+
 $(document).ready(function () {
   if ($('.select2')[0]) {
     $('.select2').select2();
@@ -66,4 +113,69 @@ $(document).on('click', '.sidebar-menu > .dropdown > a.nav-link', function (e) {
 $(document).on('click', '.nav-mainmenu', function (e) {
   e.preventDefault();
   $('body').toggleClass('showmenu');
+});
+
+$('#approvalModal').on('show.bs.modal', function (event) {
+  var videophotoid = $(event.relatedTarget).attr('data-approve-id');
+  var vidurl = $(event.relatedTarget).attr('data-action-url');
+  if (typeof videophotoid !== 'undefined' && videophotoid !== false) {
+    $(this).find('.approvebtnmodal').attr('data-approve-id', videophotoid);
+    $('#approvalModal')
+      .find('.approveform-modal')
+      .append(
+        "<input type='hidden' name='photovideoid' value='" + videophotoid + "' /> <input type='hidden' name='formapprove' value='true' />",
+      );
+  }
+  if (typeof vidurl !== 'undefined' && vidurl !== false) {
+    $('#approvalModal').find('.approveform-modal').attr('action', vidurl);
+  }
+});
+
+$('#approvalModal').on('hide.bs.modal', function (event) {
+  $('#approvalModal').find('.approveform-modal').find('input[name="photovideoid"]').remove();
+  $('#approvalModal').find('.approveform-modal').find('input[name="formapprove"]').remove();
+});
+
+$('#declineModal').on('show.bs.modal', function (event) {
+  var videophotoid = $(event.relatedTarget).attr('data-approve-id');
+  var vidurl = $(event.relatedTarget).attr('data-action-url');
+  if (typeof videophotoid !== 'undefined' && videophotoid !== false) {
+    $(this).find('.approvebtnmodal').attr('data-approve-id', videophotoid);
+    $('#declineModal')
+      .find('.approveform-modal')
+      .append(
+        "<input type='hidden' name='photovideoid' value='" + videophotoid + "' /> <input type='hidden' name='formapprove' value='true' />",
+      );
+  }
+  if (typeof vidurl !== 'undefined' && vidurl !== false) {
+    $('#declineModal').find('.approveform-modal').attr('action', vidurl);
+  }
+});
+
+$('#declineModal').on('hide.bs.modal', function (event) {
+  $('#declineModal').find('.approveform-modal').find('input[name="photovideoid"]').remove();
+  $('#declineModal').find('.approveform-modal').find('input[name="formapprove"]').remove();
+});
+
+$(document).on('click', '.approvebtnmodal', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-approve-id');
+  var form = $(this).closest('.approveform-modal');
+  var actionUrl = form.attr('action');
+  rckymcdoadmin.preloader('show');
+  $.ajax({
+    type: 'POST',
+    url: actionUrl,
+    data: form.serialize(), // serializes the form's elements.
+    success: function (data) {
+      console.log(data);
+      setTimeout(function () {
+        rckymcdoadmin.preloader('hide');
+        window.location.reload();
+      }, 500);
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      console.log(errorThrown);
+    },
+  });
 });

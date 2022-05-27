@@ -322,6 +322,7 @@ body.modal-open {
                     top: 0;
                     right: 0;
                     padding: 20px;
+                    pointer-events: none;
                     a {
                       text-decoration: none;
                       color: $theme-white;
@@ -1637,15 +1638,13 @@ body.modal-open {
   border-radius: 12px;
   padding: 13px;
   display: flex;
-  -webkit-box-pack: justify;
-  justify-content: space-between;
-  -webkit-box-align: center;
-  align-items: center;
-  > div {
-    flex: 0 0 50%;
-  }
+  flex-direction: column;
   > div:last-child {
     text-align: end;
+    margin-top: 20px;
+    a {
+      color: $theme-orange;
+    }
   }
 }
 
@@ -1694,6 +1693,37 @@ body.modal-open {
   }
 }
 
+.personal-input {
+  display: flex;
+  margin-bottom: 2px;
+  > div {
+    flex: 1;
+    margin-right: 10px;
+  }
+  > div:last-child {
+    margin-right: 0;
+  }
+}
+.termsttxt {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  margin-bottom: 16px;
+  margin-top: 5px;
+  .form-check-input {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    top: 4px;
+  }
+  .form-check-label {
+    margin-left: 10px;
+  }
+  a {
+    color: $theme-orange;
+  }
+}
 .birthdayfield {
   display: flex;
   margin-bottom: 10px;
@@ -1812,4 +1842,76 @@ body.modal-open {
     filter: opacity(0);
     fill: red;
   }
+}
+.registermsgoutput {
+  .alert {
+    p {
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+  }
+}
+.textfield-input {
+  > div:first-child {
+    position: relative;
+  }
+  .toggle-password {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    padding: 5px 8px;
+    display: table;
+    cursor: pointer;
+    color: $theme-gray3;
+  }
+}
+
+.rmc--register-view {
+  #popover-password {
+    margin: 0 18px;
+    margin-bottom: 20px;
+    ul {
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      li {
+        margin: 0;
+        margin-bottom: 8px;
+        color: $theme-gray3;
+      }
+    }
+  }
+  .progress {
+    height: 5px !important;
+    position: relative;
+    z-index: 2;
+    top: 0px;
+    border-radius: 0;
+  }
+
+  .progress-bar-danger {
+    background-color: #e90f10;
+  }
+  .progress-bar-warning {
+    background-color: #ffad00;
+  }
+  .progress-bar-success {
+    background-color: #02b502;
+  }
+  .fa-circle {
+    font-size: 6px;
+    position: relative;
+    top: -2px;
+  }
+  .fa-check {
+    color: #02b502;
+  }
+}
+.username-error {
+  margin: 0 18px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: red;
 }

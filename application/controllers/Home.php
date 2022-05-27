@@ -54,7 +54,7 @@ class Home extends MY_Controller {
                         'phoneno' => $pw['phoneno'],
                         'role' => $pw['role'],
                         'status' => $pw['status'],
-						'isverified' => $pw['isverified'],
+						      'isverified' => $pw['isverified'],
                         'logged_in' => true
                     );
                     $this->session->set_userdata($array);
@@ -272,19 +272,29 @@ class Home extends MY_Controller {
 		$success = '';
 
 		if(isset($form2)) {
+         $firstname = $this->input->post('firstname',true);
+         $lastname = $this->input->post('lastname',true);
+         $username = $this->input->post('username',true);
 			$email = $this->input->post('email',true);
 			$password = $this->input->post('password',true);
-			$month = $this->input->post('month',true);
+         $confirmpassword = $this->input->post('confirmpassword',true);
+         $agreeterms = $this->input->post('agreeterms',true);
+			/*$month = $this->input->post('month',true);
 			$day = $this->input->post('day',true);
-			$year = $this->input->post('year',true);
+			$year = $this->input->post('year',true);*/
 
-			$un = $this->Model_home->check_email($email);
+			$un = $this->Model_home->check_onlyemail($email);
+         $usercheck = $this->Model_home->check_username($username);
 
 			$valid = 1;
 
-			$this->form_validation->set_rules('email', 'Name', 'trim|required');
+			$this->form_validation->set_rules('firstname', 'First Name', 'trim|required');
+         $this->form_validation->set_rules('lastname', 'Last Name', 'trim|required');
+         $this->form_validation->set_rules('email', 'Email', 'trim|required');
 			$this->form_validation->set_rules('password', 'Password', 'trim|required');
-			if($month == 'month'){
+         $this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'trim|required');
+        
+			/*if($month == 'month'){
 				$valid = 0;
 				$error .= "<p>The Month field is required.</p>";
 			}
@@ -295,7 +305,25 @@ class Home extends MY_Controller {
 			if($year == 'year'){
 				$valid = 0;
 				$error .= "<p>The Year field is required.</p>";
-			}
+			} */
+         if(!$agreeterms){
+            $valid = 0;
+				$error .= "<p>You must agree to RockyMountains x Mcdo terms of use and privacy policy to register to this site.</p>";
+				$array = array(
+					'error' => true,
+					'message' => $error
+					);
+				echo json_encode($array);
+         }
+         if($password != $confirmpassword){
+            $valid = 0;
+				$error .= "<p>Passwords do not match.</p>";
+				$array = array(
+					'error' => true,
+					'message' => $error
+					);
+				echo json_encode($array);
+         }
 			if(strlen($password) <= 5){
 				$valid = 0;
 				$error .= "<p>Password must have a minimum of 6 characters or more.</p>";
@@ -307,6 +335,9 @@ class Home extends MY_Controller {
 				echo json_encode($array);
 			}
 
+        
+        
+
 			if($this->form_validation->run() == FALSE) {
 				$valid = 0;
                 $error .= validation_errors();
@@ -317,18 +348,22 @@ class Home extends MY_Controller {
 					);
 				echo json_encode($array);
             }
+
+            
 			if($valid == 1) 
 		    {
-			if($un==null) {
-				
-			
-
-				$birthdate_ts=strtotime("$year-$month-$day");
-				$birthdate=date("Y-m-d",$birthdate_ts);
+			if($usercheck==null) {
+            if($un==null){
+            
+				/*$birthdate_ts=strtotime("$year-$month-$day");
+				$birthdate=date("Y-m-d",$birthdate_ts);*/
 				$form_data = array(
+               'firstname' => $firstname,
+               'lastname' => $lastname,
+               'username' => $username,
 					'email'     => $email,
 					'password'  => md5($password),
-					'birthday'  => $birthdate,
+					'birthday'  => '',
 					'role' => "User",
 					'isverified' => 0,
 					'status' => "Active"
@@ -342,13 +377,22 @@ class Home extends MY_Controller {
 					'message' => $msg
 					);
 				echo json_encode($array);
+            } else {
+               $msg = "Email account already exist";
+               $array = array(
+                  'error' => true,
+                  'message' => $msg
+                  );
+               echo json_encode($array);
+            }
 			} else {
-				$msg = "Email account already exist";
-				$array = array(
-					'error' => true,
-					'message' => $msg
-					);
-				echo json_encode($array);
+            $msg = "Username already exist";
+            $array = array(
+               'error' => true,
+               'message' => $msg
+               );
+            echo json_encode($array);
+				
 			}
 		}
 			

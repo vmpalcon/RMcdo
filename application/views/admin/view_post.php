@@ -47,8 +47,11 @@ if(!$this->session->userdata('id')) {
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Type</th>
                                 <th>Photo / Video</th>
+                                <th>Title</th>
                                 <th>User</th>
+                                <th>Date Posted</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -61,22 +64,36 @@ if(!$this->session->userdata('id')) {
                                 ?>
                                 <tr>
                                     <td><?php echo $i; ?></td>
+                                    <td><span class="captxt"><b><?php echo $row['posttype']; ?></b></span></td>
                                     <td>
                                  
-                                  
-                                        <img src="<?php echo base_url(); ?>public/assets/img/no-photo1.jpg" title="banner photo" alt="">
-                                   
+                                    <?php if($row['posttype']=='video'):  ?>
+                                        <video class="rmc--video" id="rmc-video-<?php echo $row['id']; ?>" loop="" muted="muted" onmouseover="mouseover('rmc-video-<?php echo $row['id']; ?>')" onmouseout="mouseout('rmc-video-<?php echo $row['id']; ?>')" >
+                                            <source src="<?php echo base_url(); ?>public/uploads/<?php echo $row['photovideo']; ?>" type="video/mp4" playsinline="">
+                                        </video>
+                                       
+                                    <?php endif; ?>
+                                    <?php if($row['posttype']=='image'):
+                            $listimg = unserialize($row['photovideo']);
+                            ?>
+                            <img
+                                src="<?php echo base_url(); ?>public/uploads/<?php echo $listimg[0]; ?>" />
+                               
+                            <?php endif; ?>
                         
                                     </td>
                                     <td><?php echo $row['title']; ?></td>
+                                    <td><?php echo $row['username']; ?></td>
+                                    <td><?php echo $row['created_at']; ?></td>
                                     <td><div class="chip <?php if($row['status']=='Active'){ ?>color-green<?php } else if($row['status']=='Pending') { ?>color-yellow<?php } else { ?>color-red<?php } ?>"><div class="chip-label"><?php echo $row['status']; ?></div></div></td>
                                     <td><div class="btngroup-action">
-                                        <?php if($row['status']=='Pending'): ?>
-                                            <a href="#" class="btn btn-purple btn-sm btn-block">Review</a>
+                                    <?php if($row['status']=='Pending'): ?>
+                                            <a href="<?php echo base_url(); ?>admin/post/review/<?php echo $row['id']; ?>" class="btn btn-purple btn-sm btn-block">Review</a>
                                             <?php endif; ?>
                                             <?php if($row['status']!='Pending'): ?>
-                                        <a href="<?php echo base_url(); ?>admin/post/edit/<?php echo $row['id']; ?>" class="btn btn-primary btn-sm btn-block">Edit</a>
-                                        <a href="<?php echo base_url(); ?>admin/post/delete/<?php echo $row['id']; ?>" class="btn btn-danger btn-sm btn-block" onClick="return confirm('Are you sure?');">Delete</a>
+
+                                        <a href="<?php echo base_url(); ?>admin/post/review/<?php echo $row['id']; ?>" class="btn btn-warning btn-sm btn-block" >View</a>
+                                       <!-- <a href="<?php echo base_url(); ?>admin/post/delete/<?php echo $row['id']; ?>" class="btn btn-danger btn-sm btn-block" onClick="return confirm('Are you sure?');">Delete</a>-->
                                         <?php endif; ?>
                                     </div>
                                     </td>

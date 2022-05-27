@@ -21,10 +21,11 @@ class Model_post extends CI_Model
     }
     function pending() 
     {
-        $sql = "SELECT * 
-                FROM tbl_post t1
-                WHERE t1.status = 'pending'
-                ORDER BY t1.id DESC";
+        $sql = "SELECT tbl_post.*, tbl_user.photo, tbl_user.username, tbl_user.firstname, tbl_user.lastname, tbl_user.isverified
+                FROM tbl_post 
+                LEFT JOIN tbl_user on tbl_user.id = tbl_post.userid
+                WHERE tbl_post.status = 'Pending'
+                ORDER BY tbl_post.id DESC";
         $query = $this->db->query($sql);
         return $query->result_array();
     }
@@ -64,6 +65,7 @@ class Model_post extends CI_Model
         $query = $this->db->get();
         return $query->first_row('array');
     }
+
     function slug_duplication_check($slug)
     {
         $sql = 'SELECT * FROM tbl_post WHERE slug=?';

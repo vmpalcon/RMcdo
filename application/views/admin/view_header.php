@@ -14,7 +14,9 @@ if($this->session->userdata('role')=='User'){
 </head>
 
 <body class="bd-init">
-
+<div class="linear-activity">
+      <div class="indeterminate"></div>
+   </div>
 <div class="app">
 <div class="navbar-bg"></div>
 <nav class="navbar navbar-expand-lg main-navbar">
