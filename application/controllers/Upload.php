@@ -13,7 +13,9 @@ class Upload extends MY_Controller {
     public function index()
 	{
 		$data['setting'] = $this->Model_common->all_setting();
-
+		$data['sent'] = $this->Model_common->getsent();
+		$data['totalnotifications'] = $this->Model_common->gettotalnotification();
+		$data['notifications'] = $this->Model_common->getnotification();
 		$form1 = $this->input->post('form1',true);
 		
 		

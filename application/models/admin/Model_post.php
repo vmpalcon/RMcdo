@@ -36,6 +36,25 @@ class Model_post extends CI_Model
         return $this->db->insert_id();
     }
 
+    function addnotification($data) 
+    {
+        $this->db->insert('tbl_notifications',$data);
+        return $this->db->insert_id();
+    }
+    function addsent($data) 
+    {
+        $this->db->insert('tbl_sent',$data);
+        return $this->db->insert_id();
+    }
+    function getnotification($id)
+    {
+        $this->db->select('*');
+        $this->db->from('tbl_post');
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+        return $query->first_row('array');
+    }
+
     function update($id,$data) 
     {
         $this->db->where('id',$id);

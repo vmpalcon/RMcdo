@@ -191,8 +191,8 @@
                <div class="rmc--photovideo-leftpane">
                   <div class="rmc--photovideo-blurbg"></div>
                   <div class="rmc--photovideo-tool">
-                     <a href="#" class="video-close" data-bs-dismiss="modal" aria-label="Close"></a>
-                     <img src="assets/img/grouplogo.png" alt="" />
+                     <div><a href="#" class="video-close" data-bs-dismiss="modal" aria-label="Close"></a></div>
+                     <div><img src="<?php echo base_url(); ?>public/assets/img/grouplogo.png" alt="" /></div>
                   </div>
 
                   <div class="rmc--photovideo-object">
@@ -369,8 +369,12 @@
 </div>
 <!-- Toast Alert -->
 <div class="toast-container"></div>
+<div class="newtoast-container"></div>
 <!-- back to top -->
 <a href="javascript:void(0)" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
+<script>
+   var baseurl = "<?php echo base_url(); ?>";
+</script>
 <script src="<?php echo base_url(); ?>public/assets/vendor/jquery/jquery-3.6.0.min.js"></script>
 <script src="<?php echo base_url(); ?>public/assets/vendor/bootstrap5/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>public/assets/vendor/optiscroll/optiscroll.min.js"></script>

@@ -118,6 +118,49 @@ $(document).on('click', '.poploginbtn a', function (e) {
   $('.rmc--login-view').show();
   $('.rmc--register-view').hide();
 });
+$(document).on('click', '.unread', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-id');
+  var total = $('.notification-holder').attr('data-current');
+  console.log(total);
+  if (typeof total !== 'undefined' && total !== false) {
+    var newtotal = parseInt(total) - 1;
+    $('.notification-holder').attr('data-current', newtotal);
+
+    if (newtotal == 0) {
+      $('.notification-holder').html('');
+    } else {
+      $('.notification-holder').html(
+        `<span
+      class="mainnotification-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      >
+      ` +
+          newtotal +
+          `
+   </span>`,
+      );
+    }
+  }
+  if (typeof id !== 'undefined' && id !== false) {
+    var mydata = {
+      notificationid: id,
+      notificationstatus: 'read',
+    };
+    $(this).removeClass('unread');
+
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/index',
+      data: mydata,
+      success: function (data) {
+        console.log(data);
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+  }
+});
 
 $('.rmc--login-view form').submit(function (e) {
   e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -345,6 +388,81 @@ function itemExists(haystack, needle) {
 }
 
 var rckymcdo = {
+  sse: function () {
+    // SSE
+    var evtSource = new EventSource('home/notification_data');
+
+    evtSource.onopen = function () {
+      console.log('Connection to server opened.');
+    };
+
+    evtSource.onmessage = function (e) {
+      var data = JSON.parse(e.data);
+      var current = $('.notification-holder').attr('data-current');
+
+      var notifydata = $('.notificationbtn').attr('data-sent');
+
+      if (data.sent != null) {
+        if (parseInt(data.sent) != parseInt(notifydata)) {
+          $('.notificationbtn').attr('data-sent', data.sent);
+          $('.newtoast-container').append(
+            `
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000" >
+      <div class="toast-header">
+  <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#ff4a00"></rect></svg>
+    <strong class="me-auto">Notification</strong>
+    <small class="text-muted">just now</small>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+        <div class="toast-body">
+         ` +
+              data.notification.title +
+              `
+        </div>
+      </div>
+    `,
+          );
+
+          $('.newtoast-container .toast').each(function (index, e) {
+            $(e).toast('show');
+          });
+
+          $('.newtoast-container .toast').on('hidden.bs.toast', e => {
+            $(e.currentTarget).remove();
+          });
+        }
+      }
+
+      if (parseInt(data.totalnotification) != 0) {
+        $('.notification-holder').html(
+          `<span
+        class="mainnotification-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+        >
+        ` +
+            data.totalnotification +
+            `
+     </span>`,
+        );
+        if (parseInt(data.totalnotification) != parseInt(current)) {
+          $('.notification-holder').attr('data-current', data.totalnotification);
+          $('.mainnotification-count').attr('data-current', data.totalnotification);
+          if (data.totalnotification != 0) {
+            $('.mainnotification-count').show();
+            $('.mainnotification-count').text(data.totalnotification);
+          } else {
+            $('.mainnotification-count').hide();
+          }
+        }
+      } else {
+        $('notification-holder').html('');
+      }
+    };
+
+    evtSource.onerror = function () {
+      console.log('EventSource failed.');
+      evtSource.close();
+    };
+  },
   resetfileupload: function () {
     $('.info-star').html(
       `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
@@ -463,7 +581,66 @@ var rckymcdo = {
     $('#alertModal').modal('hide');
   },
   shownotification: function (_this) {
-    $(_this).parent().find('.notification-wrapper').toggleClass('active');
+    console.log($(_this).parent().find('.notification-wrapper').hasClass('active'));
+    if ($(_this).parent().find('.notification-wrapper').hasClass('active')) {
+      $(_this).parent().find('.notification-wrapper').removeClass('active');
+    } else {
+      $(_this).parent().find('.notification-wrapper').addClass('active');
+      var mydata = {
+        formnotification: true,
+      };
+      $('.notification-list').html('<div class="ntyloader"></div>');
+      $.ajax({
+        type: 'POST',
+        url: baseurl + 'home/index',
+        data: mydata,
+        success: function (data) {
+          $('.notification-list').html('');
+          data = data = JSON.parse(data);
+          console.log(data);
+
+          if (data.error == false) {
+            var unread = '';
+            for (var i = 0; i < data.notifylist.length; i++) {
+              if (data.notifylist[i]['status'] == 'unread') {
+                unread = 'unread';
+              }
+              $('.notification-list').append(
+                `<li><a href="` +
+                  baseurl +
+                  data.notifylist[i]['link'] +
+                  `"
+              class="` +
+                  unread +
+                  `" data-id="` +
+                  data.notifylist[i]['id'] +
+                  `"><span><i
+                    class="fas fa-photo-video"></i></span><span>
+                ` +
+                  data.notifylist[i]['title'] +
+                  `
+                 <br>
+                 <i>
+                    ` +
+                  timeAgo(new Date(data.notifylist[i]['created_at'])) +
+                  `
+                 </i>
+                 <br>
+              </span></a></li>`,
+              );
+            }
+            if (data.notifylist.length == 0) {
+              $('.notification-list').html(
+                '<div class="mt-3" style="padding: 0px 40px"><h3>All activity</h3><p style="font-size: 14px;">Notifications about your account will appear here.</p></div>',
+              );
+            }
+          }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+          console.log(errorThrown);
+        },
+      });
+    }
   },
   triggerupload: function () {
     $('#video_upload').trigger('click');
@@ -494,10 +671,10 @@ var rckymcdo = {
   },
   socialconnect: function () {
     rckymcdo.preloader('show');
-    localStorage.setItem('rockymountainsxmcdo_auth', 'true');
+
     setTimeout(function () {
       rckymcdo.preloader('hide');
-      console.log(localStorage.getItem('rockymountainsxmcdo_auth'));
+
       location.reload();
     }, 4000);
   },
@@ -512,7 +689,7 @@ var rckymcdo = {
   },
   logout: function () {
     rckymcdo.preloader('show');
-    localStorage.removeItem('rockymountainsxmcdo_auth');
+
     setTimeout(function () {
       rckymcdo.preloader('hide');
       location.reload();
@@ -532,11 +709,11 @@ var rckymcdo = {
         </div>
       `);
 
-    $('.toast').each(function (index, e) {
+    $('.toast-container .toast').each(function (index, e) {
       $(e).toast('show');
     });
     $(_this).parent().parent().parent().removeClass('active');
-    $('.toast').on('hidden.bs.toast', e => {
+    $('.toast-container .toast').on('hidden.bs.toast', e => {
       $(e.currentTarget).remove();
     });
   },
@@ -552,15 +729,18 @@ var rckymcdo = {
 $(document).mouseup(function (e) {
   var searchcontainer = $('.header-search-wrap'),
     sharecontainer = $('.rmc--share'),
-    notification = $('.notification-wrapper');
+    notification = $('.notification-wrapper'),
+    noty = $('.notificationbtn');
   if (!searchcontainer.is(e.target) && searchcontainer.has(e.target).length === 0) {
     searchcontainer.removeClass('active');
   }
   if (!sharecontainer.is(e.target) && sharecontainer.has(e.target).length === 0) {
     $(sharecontainer).removeClass('active');
   }
-  if (!notification.is(e.target) && notification.has(e.target).length === 0) {
-    $(notification).removeClass('active');
+  if ($('.notification-wrapper').hasClass('active')) {
+    if (!notification.is(e.target) && notification.has(e.target).length === 0 && !noty.is(e.target) && noty.has(e.target).length === 0) {
+      $(notification).removeClass('active');
+    }
   }
 });
 $('#search').on('click', function (e) {
@@ -601,20 +781,29 @@ function doneTyping() {
 
   if (value.length !== 0) {
     $('.searchloading').show();
-    setTimeout(function () {
-      $.getJSON('search.json', function (data) {
+
+    var res = {
+      searchresult: value,
+    };
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/searchresult',
+      data: res,
+      success: function (data) {
+        data = JSON.parse(data);
+        console.log(data);
         $('.searchloading').hide();
 
         var q = $('#search').val();
         $('.header-search-wrap').addClass('active');
         var res = [];
-        data.sort((a, b) => a.title.localeCompare(b.title));
-        for (var i = 0; i < data.length; i++) {
-          res.push(data[i].title);
+        data.tags.sort((a, b) => a.title.localeCompare(b.title));
+        for (var i = 0; i < data.tags.length; i++) {
+          res.push(data.tags[i].title);
         }
         var search = new RegExp(q, 'i'); // prepare a regex object
         let b = res.filter(item => search.test(item));
-        console.log(b);
+
         $('#searchresult').find('.searchlikeresult').html('');
 
         for (var i = 0; i < b.length; i++) {
@@ -624,8 +813,43 @@ function doneTyping() {
               .append('<li><a href="javascript:void(0)" class="searchhelper">' + b[i] + '</a></li>');
           }
         }
-      });
-    }, 500);
+        $('#searchresult').find('.searchuserlist').html('');
+
+        for (var x = 0; x < data.users.length; x++) {
+          if (x <= 5) {
+            $('#searchresult')
+              .find('.searchuserlist')
+              .append(
+                `<li><a href="javascript:void(0)" class="searchuser">
+              <div class="searchimg-wrap"><img
+                    src="` +
+                  baseurl +
+                  `public/uploads/` +
+                  data.users[x].photo +
+                  `" onError="this.onerror=null;this.src='` +
+                  baseurl +
+                  `public/assets/img/no-photo.jpg';"
+                    alt=""></div>
+              <div class="search-text-wrap">
+                 <span>` +
+                  data.users[x].username +
+                  `</span>
+                 <span>` +
+                  data.users[x].firstname +
+                  ' ' +
+                  data.users[x].lastname +
+                  `</span>
+              </div>
+           </a>
+        </li>`,
+              );
+          }
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
   } else {
     $('.header-search-wrap').removeClass('active');
   }
@@ -856,15 +1080,17 @@ if ($('#video_upload')[0]) {
 
 $('#videoshowModal').on('show.bs.modal', function (event) {
   $('.rmc--photovideo-source').html('');
-  var getfiletype = $(event.relatedTarget).parent().attr('data-filetype');
+  var getfiletype = $(event.relatedTarget).attr('data-filetype');
+
   if (typeof getfiletype !== 'undefined' && preview !== getfiletype) {
     if (getfiletype == 'video') {
       var source = $(event.relatedTarget).attr('data-source');
       var preview = $(event.relatedTarget).attr('data-preview');
+
       if (typeof preview !== 'undefined' && preview !== false) {
         $('.rmc--photovideo-blurbg').css('background', "url('" + preview + "')");
       }
-      $('.rmc--photovideo-source').html(
+      $('#videoshowModal .rmc--photovideo-source').html(
         `<video id="popupvideoplayer" loop="" autoplay="" controls>
       <source src="` +
           source +
@@ -876,8 +1102,27 @@ $('#videoshowModal').on('show.bs.modal', function (event) {
       $('.rmcpop-title').html($(event.relatedTarget).parent().parent().parent().parent().find('.rmc--profile-username').attr('title'));
       $('.rmcpop-message').html($(event.relatedTarget).parent().parent().parent().parent().find('.rmc--profile-title').html());
     } else if (getfiletype == 'image') {
-      var source = $(event.relatedTarget).attr('data-source');
-      $('.rmc--photovideo-source').html(`<img src="` + source + `" alt="" />`);
+      var source = $(event.relatedTarget).parent().parent().html();
+      $('#videoshowModal')
+        .find('.rmc--photovideo-source')
+        .html('<div id="popcarouselRmxmcdo" class="carousel slide" data-bs-ride="carousel">' + source + '</div>');
+      $('#videoshowModal').find('.rmc--photovideo-source .carousel-indicators > button').attr('data-bs-target', '#popcarouselRmxmcdo');
+      $('#videoshowModal').find('.rmc--photovideo-source .carousel-control-prev').attr('data-bs-target', '#popcarouselRmxmcdo');
+      $('#videoshowModal').find('.rmc--photovideo-source .carousel-control-next').attr('data-bs-target', '#popcarouselRmxmcdo');
+
+      $('.rmcpop-user').html(
+        $(event.relatedTarget).parent().parent().parent().parent().parent().parent().find('.rmc--profile-username a').html(),
+      );
+      $('.rmcpop-img').attr(
+        'src',
+        $(event.relatedTarget).parent().parent().parent().parent().parent().parent().find('.rmc--profile-userimg').attr('src'),
+      );
+      $('.rmcpop-title').html(
+        $(event.relatedTarget).parent().parent().parent().parent().parent().parent().find('.rmc--profile-username').attr('title'),
+      );
+      $('.rmcpop-message').html(
+        $(event.relatedTarget).parent().parent().parent().parent().parent().parent().find('.rmc--profile-title').html(),
+      );
     }
   }
 });
@@ -1008,13 +1253,15 @@ function change_month(select) {
 */
 /**** POST ****/
 $(document).ready(function () {
+  rckymcdo.sse();
+
   var limit = 3;
   var start = 0;
   var action = 'inactive';
 
   function load_data(limit, start) {
     $.ajax({
-      url: 'home/fetch',
+      url: baseurl + 'home/fetch',
       method: 'POST',
       data: { limit: limit, start: start },
       cache: false,
@@ -1140,4 +1387,62 @@ function checkStrength(password) {
     passwordStrength.style = 'width: 100%';
     $('#password-strength').attr('data-strength', '100');
   }
+}
+
+function timeAgo(time) {
+  switch (typeof time) {
+    case 'number':
+      break;
+    case 'string':
+      time = +new Date(time);
+      break;
+    case 'object':
+      if (time.constructor === Date) time = time.getTime();
+      break;
+    default:
+      time = +new Date();
+  }
+  var time_formats = [
+    [60, 'seconds', 1], // 60
+    [120, '1 minute ago', '1 minute from now'], // 60*2
+    [3600, 'minutes', 60], // 60*60, 60
+    [7200, '1 hour ago', '1 hour from now'], // 60*60*2
+    [86400, 'hours', 3600], // 60*60*24, 60*60
+    [172800, 'Yesterday', 'Tomorrow'], // 60*60*24*2
+    [604800, 'days', 86400], // 60*60*24*7, 60*60*24
+    [1209600, 'Last week', 'Next week'], // 60*60*24*7*4*2
+    [2419200, 'weeks', 604800], // 60*60*24*7*4, 60*60*24*7
+    [4838400, 'Last month', 'Next month'], // 60*60*24*7*4*2
+    [29030400, 'months', 2419200], // 60*60*24*7*4*12, 60*60*24*7*4
+    [58060800, 'Last year', 'Next year'], // 60*60*24*7*4*12*2
+    [2903040000, 'years', 29030400], // 60*60*24*7*4*12*100, 60*60*24*7*4*12
+    [5806080000, 'Last century', 'Next century'], // 60*60*24*7*4*12*100*2
+    [58060800000, 'centuries', 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
+  ];
+  var seconds = (+new Date() - time) / 1000,
+    token = 'ago',
+    list_choice = 1;
+
+  if (seconds == 0) {
+    return 'Just now';
+  }
+  if (seconds < 0) {
+    seconds = Math.abs(seconds);
+    token = 'from now';
+    list_choice = 2;
+  }
+  var i = 0,
+    format;
+  while ((format = time_formats[i++]))
+    if (seconds < format[0]) {
+      if (typeof format[2] == 'string') return format[list_choice];
+      else return Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
+    }
+  return time;
+}
+
+function subtractMinutes(numOfMinutes, date = new Date()) {
+  date.setMinutes(date.getMinutes() - numOfMinutes);
+
+  return date;
 }

@@ -64,23 +64,49 @@ class Post extends MY_Controller
 				);
 			} else {
 				$form_data = array(
-					
 					'status'          => $status
 				);
 			}
+
 				$this->Model_post->update($photovideoid,$form_data);
+
+				$mypost = $this->Model_post->getData($photovideoid);
+				
 				$msg = '';
 				if($statusoption=="1" || $statusoption==1){
 					$msg = 'Successfully approved the post.';
 					$this->session->set_flashdata('success',$msg);
+
+					$form_notification = array(
+						'userid' => $mypost['userid'],
+						'by_userid' => $this->session->userdata('id'),
+						'type' => 'general',
+						'title' => 'Your post has been approved.',
+						'link' => 'post/'.$mypost['slug']
+					);
 				} else {
 					$msg = 'You have successfully decline this post. Your message will sent to user.';
 					$this->session->set_flashdata('error',$msg);
+					$form_notification = array(
+						'userid' => $mypost['userid'],
+						'by_userid' => $this->session->userdata('id'),
+						'type' => 'general',
+						'title' => 'Your post has been declined. please check your email for info.',
+						'link' => '#'
+					);
 					
 				}
-			
+				$formsent = array(
+					'userid' => $mypost['userid'],
+					'from_userid' => $this->session->userdata('id')
+				);
+
+				$this->Model_post->addnotification($form_notification);
+				$this->Model_post->addsent($formsent);
+				
 				
 				$array = array(
+					'notification' => $form_notification,
 					'error' => false,
 					'status' => $status,
 					'message' => $msg

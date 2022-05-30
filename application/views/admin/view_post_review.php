@@ -117,9 +117,9 @@ if(!$this->session->userdata('id')) {
                             <div class="form-group">
                                 <label for="" class="col-sm-3 control-label">URL:</label>
                                 <div class="col-sm-9">
-                                    <a href="<?php echo base_url().'video/'.$post_review['slug']; ?>"
+                                    <a href="<?php echo base_url().'post/'.$post_review['slug']; ?>"
                                         target="_blank">
-                                        <?php echo base_url().'video/'.$post_review['slug']; ?>
+                                        <?php echo base_url().'post/'.$post_review['slug']; ?>
                                     </a>
                                 </div>
                             </div>

@@ -86,7 +86,19 @@ class Model_home extends CI_Model
         return $query->first_row('array');
     }
 
-    
+    function getsearch($value)
+    {
+        $sql = 'SELECT tag_id as id, tag_title as title FROM tbl_tags WHERE tag_title LIKE "%'.$value.'%"';
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
 
+    function getuser($value)
+    {
+        $sql = 'SELECT id, username, firstname, lastname, photo FROM tbl_user WHERE firstname LIKE "%'.$value.'%" OR lastname LIKE "%'.$value.'%"';
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+  
     
 }

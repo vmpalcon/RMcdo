@@ -10,6 +10,8 @@ class Model_common extends CI_Model
         return $query->result_array();
     }
 
+   
+
 	public function get_setting_data()
     {
         $query = $this->db->query("SELECT * from tbl_settings WHERE id=1");

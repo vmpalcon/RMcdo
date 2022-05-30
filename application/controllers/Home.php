@@ -13,9 +13,42 @@ class Home extends MY_Controller {
 	public function index()
 	{
 		$data['setting'] = $this->Model_common->all_setting();
+      $data['sent'] = $this->Model_common->getsent();
+
+      $data['totalnotifications'] = $this->Model_common->gettotalnotification();
+      $data['notifications'] = $this->Model_common->getnotification();
 
 		$form1 = $this->input->post('form1',true);
 		
+      $formnotification = $this->input->post('formnotification',true);
+
+      $notificationstatus = $this->input->post('notificationstatus',true);
+      $notificationstatusid = $this->input->post('notificationid',true);
+
+      if(isset($notificationstatus)) {
+         $notymydata = array(
+            'status' => $notificationstatus
+            );
+        $nty = $this->Model_common->updatenotification($notificationstatusid,$notymydata);
+
+         $array = array(
+       'error' => false,
+       'notifylist' => $nty
+       );
+    echo json_encode($array);
+         return;
+      }
+
+      if(isset($formnotification)) {
+         $nty = $this->Model_common->getnotification();
+
+         $array = array(
+       'error' => false,
+       'notifylist' => $nty
+       );
+    echo json_encode($array);
+         return;
+      }
 		
 
 		if(isset($form1)) {
@@ -76,6 +109,23 @@ class Home extends MY_Controller {
 		
 	}
 
+   function searchresult() {
+      $searchresult = $this->input->post('searchresult',true);
+      if(isset($searchresult)) {
+        // echo $searchresult;
+         $tags = $this->Model_home->getsearch($searchresult);
+         $users = $this->Model_home->getuser($searchresult);
+
+         $array = array(
+				'tags' => $tags,
+				'users' => $users
+				);
+     
+      echo json_encode($array);
+         return;
+      }
+   }
+
 	function logout() {
         $this->session->sess_destroy();
         redirect(base_url());
@@ -113,7 +163,8 @@ class Home extends MY_Controller {
       <video class="rmc--video" id="rmc-video-'.$row->id.'" loop="" muted="muted"
          onmouseover="mouseover(\'rmc-video-'.$row->id.'\')"
          onmouseout="mouseout(\'rmc-video-'.$row->id.'\')" data-bs-toggle="modal"
-         data-bs-target="#videoshowModal"
+         data-bs-target="#videoshowModal" data-filetype="' .$row->posttype.
+         '"
          data-source="'  .base_url().'public/uploads/'.$row->photovideo.
 '">
          <source src="'  .base_url().'public/uploads/'.$row->photovideo.
@@ -132,16 +183,18 @@ class Home extends MY_Controller {
             
             if($i==0){
                $returnbtn .= '<button type="button" data-bs-target="#carouselRmxmcdo'.$row->id.'" data-bs-slide-to="'.$i.'" aria-label="Slide '.$i.'" class="active" aria-current="true"></button>';
-               $returnimg .= '<div class="carousel-item active" data-bs-interval="10000"> <img src="'.base_url().'public/uploads/'.$listimg[$i].'" alt="..."> </div>';
+               $returnimg .= '<div class="carousel-item active" data-bs-interval="10000" data-bs-toggle="modal"
+               data-bs-target="#videoshowModal" data-filetype="' .$row->posttype. '"> <img src="'.base_url().'public/uploads/'.$listimg[$i].'" alt="..."> </div>';
             } else {
                $returnbtn .= '<button type="button" data-bs-target="#carouselRmxmcdo'.$row->id.'" data-bs-slide-to="'.$i.'" aria-label="Slide '.$i.'" aria-current="true"></button>';
-               $returnimg .= '<div class="carousel-item" data-bs-interval="10000"> <img src="'.base_url().'public/uploads/'.$listimg[$i].'" alt="..."> </div>';
+               $returnimg .= '<div class="carousel-item" data-bs-interval="10000" data-bs-toggle="modal"
+               data-bs-target="#videoshowModal" data-filetype="' .$row->posttype. '"> <img src="'.base_url().'public/uploads/'.$listimg[$i].'" alt="..."> </div>';
             }
             
         }
          
        
-         $myimgvideo = '<div id="carouselRmxmcdo'.$row->id.'" class="carousel slide" data-bs-ride="carousel">
+         $myimgvideo = '<div id="carouselRmxmcdo'.$row->id.'" class="carousel slide" data-bs-ride="carousel" >
          <div class="carousel-indicators">
          '.$returnbtn.'
          </div>
@@ -176,8 +229,7 @@ class Home extends MY_Controller {
           '</div>
             <div class="rmc--video-timeline">
                <div>
-                  <div class="rmc--video-wrap" data-filetype="' .$row->posttype.
-          '">
+                  <div class="rmc--video-wrap">
                      '.$myimgvideo.'
                      <div class="rmc--video-tool">
       '. $vidtool.'
@@ -398,8 +450,42 @@ class Home extends MY_Controller {
 			
 		}
 	}
-
 	
+   public function notification_data() {
+		header("Content-Type: text/event-stream");
+		header("Cache-Control: no-cache");
+		header("Connection: keep-alive");
+
+      // Check user session validity
+if(!($this->session->userdata('id'))) {
+	$sse_response = "data: " . json_encode(array('error' => 1, 'error_message' => 'User Authentication Failed')) . PHP_EOL . PHP_EOL;
+	echo $sse_response;
+	exit();
+}
+
+      while(1) {
+         // Get the last post_id that was shown to the user
+        
+         $sse_response = count($this->Model_common->gettotalnotification());
+         $notyd = $this->Model_common->getsent();
+         $sse_data = $this->Model_common->getnotification();
+
+         $output = "data: " . json_encode(array('totalnotification' => $sse_response, 'sent' => $notyd[0]['id'], 'notification' => $sse_data[0], 'error' => 0)) . PHP_EOL . PHP_EOL;
+
+         echo $output;
+      
+         ob_flush();
+         flush();	
+
+         if(connection_aborted()) {
+				break;
+			}
+         
+         // Check every 10 seconds
+         session_write_close();
+         sleep(5);
+      }
+   }
 
 	
 }
