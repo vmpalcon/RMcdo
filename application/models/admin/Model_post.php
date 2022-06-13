@@ -76,6 +76,23 @@ class Model_post extends CI_Model
         return $query->first_row('array');
     }
 
+    function gettagData($id)
+    {
+        $this->db->select('tbl_tags.*, tbl_tagpost.post_id');
+        $this->db->from('tbl_tags');
+        $this->db->join('tbl_tagpost', 'tbl_tagpost.tag_id = tbl_tags.tag_id', 'left');
+        $this->db->where('tbl_tagpost.post_id', $id);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    function deletetagpost($post_id,$tag_id)
+    {
+        $this->db->where('post_id',$post_id);
+        $this->db->where('tag_id',$tag_id);
+        $this->db->delete('tbl_tagpost');
+    }
+
     function post_dynamic_check($id)
     {
         $this->db->select('*');

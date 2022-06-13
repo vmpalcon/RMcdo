@@ -55,5 +55,7 @@ $route['translate_uri_dashes'] = TRUE;
 
 $route['page/(:any)'] = 'page/index/$1';
 $route['post/(:any)'] = 'post/index/$1';
+$route['user/(:any)'] = 'user/index/$1';
+$route['tags/(:any)'] = 'tags/index/$1';
 
 $route['admin'] = 'admin/login';

@@ -1,4 +1,5 @@
 <?php
+
 if(!$this->session->userdata('id')) {
     redirect(base_url().'admin');
 }
@@ -58,6 +59,8 @@ if(!$this->session->userdata('id')) {
                         </thead>
                         <tbody>
                             <?php
+                           
+
                             $i=0;
                             foreach ($pendingpost_dynamic as $row) {
                                 $i++;
@@ -70,9 +73,12 @@ if(!$this->session->userdata('id')) {
 
                                
                                         <?php if($row['posttype']=='video'):  ?>
-                                        <video class="rmc--video" id="rmc-video-<?php echo $row['id']; ?>" loop="" muted="muted" onmouseover="mouseover('rmc-video-<?php echo $row['id']; ?>')" onmouseout="mouseout('rmc-video-<?php echo $row['id']; ?>')" >
-                                            <source src="<?php echo base_url(); ?>public/uploads/<?php echo $row['photovideo']; ?>" type="video/mp4" playsinline="">
-                                        </video>
+                                            <?php if($row['vimeophoto']=='none'){ ?>
+                                                <img src="<?php echo base_url(); ?>public/assets/img/notavailable.jpg" alt="">
+                                            <?php } else { ?>
+                                            <img src="<?php echo $row['vimeophoto']; ?>" alt="">
+                                           <?php } ?>
+
                                        
                                     <?php endif; ?>
                                     <?php if($row['posttype']=='image'):

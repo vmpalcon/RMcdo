@@ -8,7 +8,7 @@ if(!$this->session->userdata('id')) {
 <div class="content-header-title">
             <h1>View All Users</h1>
             <div class="content-header-right">
-                    <a href="<?php echo base_url(); ?>admin/users/add" class="btn btn-primary btn-sm">Add New</a>
+                    <!--<a href="<?php echo base_url(); ?>admin/users/add" class="btn btn-primary btn-sm">Add New</a>-->
                 </div>
         </div>
     <div class="content-header-breadcrumb">
@@ -63,15 +63,22 @@ if(!$this->session->userdata('id')) {
 								?>
 								<tr>
 									<td><?php echo $i; ?></td>
-									<td style="width:150px;"><img src="<?php echo base_url(); ?>public/uploads/<?php echo $row['photo']; ?>" alt="<?php echo $row['firstname']; ?>" style="width:100px;"></td>
+									<td>
+									<?php if (file_exists(FCPATH.'public/uploads/'.$row['photo']) && $row['photo']!='') { ?>
+                                        <img src="<?php echo base_url(); ?>public/uploads/<?php echo $row['photo']; ?>" title="<?php echo $row['firstname']; ?>" alt="" class="profilephoto">
+                                    <?php } else { ?>
+                                        <img src="<?php echo base_url(); ?>public/assets/img/no-photo.jpg" title="no photo" alt="" class="profilephoto">
+                                    <?php } ?></td>
 									<td><?php echo $row['firstname'].' '.$row['lastname']; ?></td>
 									<td><?php echo $row['email']; ?></td>
 									<td><?php echo $row['role']; ?></td>
 									<td><div class="chip <?php if($row['status']=='Active'){ ?>color-green<?php } else { ?>color-red<?php } ?>"><div class="chip-label"><?php echo $row['status']; ?></div></div></td>
 									<td><div class="btngroup-action">									
-										<a href="<?php echo base_url(); ?>admin/users/edit/<?php echo $row['id']; ?>" class="btn btn-primary btn-xs">Edit</a>
+									<!--	<a href="<?php echo base_url(); ?>admin/users/edit/<?php echo $row['id']; ?>" class="btn btn-primary btn-xs">Edit</a>
+										<?php if($row['role']=='User'): ?>
 										<a href="<?php echo base_url(); ?>admin/users/delete/<?php echo $row['id']; ?>" class="btn btn-danger btn-xs" onClick="return confirm('Are you sure?');">Delete</a>
-							</div>
+											<?php endif; ?>-->
+									</div>
 									</td>
 								</tr>
 								<?php

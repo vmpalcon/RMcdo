@@ -50,11 +50,11 @@ $success_message = '';
       if (!$full) $string = array_slice($string, 0, 1);
       return $string ? implode(', ', $string) . ' ago' : 'just now';
   }
-    if($class_name == 'home')
+    if($class_name == 'home' || $class_name == 'upload' )
     {
         echo '<meta name="description" content="desc">';
         echo '<meta name="keywords" content="keywords">';
-        echo '<title>RockyMountains x McDo</title>';
+        echo '<title>'.$setting['website_name'].'</title>';
     }
    
     ?>
@@ -138,7 +138,7 @@ $success_message = '';
 
                            </a>
                            <div class="notification-wrapper">
-                              <div class="notification-title">Notifications <span>clear all</span>
+                              <div class="notification-title">Notifications <!--<span>clear all</span>-->
                               </div>
                               <div class="notification-menu">
                                  <ul class="nav">
@@ -187,12 +187,11 @@ $success_message = '';
                         <div class="header-auth-profile-menu">
                            <ul>
 
-                              <li><a href="javscript:void(0)">
-                                    <?php if($this->session->userdata('username')!==''){ ?>@
-                                    <?php echo $this->session->userdata('username'); } else { echo $this->session->userdata('email'); } ?>
+                              <li><a href="<?php echo base_url(); ?>user/<?php echo $this->session->userdata('username'); ?>">
+                                  @<?php echo $this->session->userdata('username'); ?>
                                  </a></li>
-                              <li><a href="javscript:void(0)">Edit Profile</a></li>
-                              <li><a href="javscript:void(0)">Settings</a></li>
+                              <li><a href="<?php echo base_url(); ?>edit/profile">Edit Profile</a></li>
+
                               <li class="spacing"></li>
                               <?php if($this->session->userdata('role')=='Admin'){?>
                               <li><a href="<?php echo base_url(); ?>admin">Admin Panel</a></li>

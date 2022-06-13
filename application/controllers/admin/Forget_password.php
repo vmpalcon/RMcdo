@@ -16,7 +16,7 @@ class Forget_password extends CI_Controller
         $success = '';
 
         $data['setting'] = $this->Model_forget_password->get_setting_data();
-
+        date_default_timezone_set($data['setting']['timezone']);
         if(isset($_POST['form1'])) {
 
             if(PROJECT_MODE == 0) {

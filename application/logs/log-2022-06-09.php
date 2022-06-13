@@ -1,0 +1,196 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ERROR - 2022-06-09 00:48:41 --> Unable to connect to the database
+ERROR - 2022-06-09 00:48:41 --> Unable to connect to the database
+ERROR - 2022-06-09 00:48:44 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 00:48:45 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 00:48:49 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 00:49:08 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 00:50:02 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 00:50:04 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 00:50:11 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 00:50:13 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 00:50:19 --> 404 Page Not Found: Edit/uploads
+ERROR - 2022-06-09 00:50:20 --> 404 Page Not Found: Edit/home
+ERROR - 2022-06-09 00:50:25 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 00:50:27 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 00:50:54 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 00:50:55 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:02:26 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:02:29 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:02:42 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:09:57 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:13:00 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 11:13:01 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 11:13:36 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:13:38 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:16:55 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:16:57 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:17:00 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:20:10 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:20:12 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:22:07 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:22:09 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:22:37 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:22:48 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:39:40 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:39:41 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:39:56 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:39:58 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:40:35 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:40:37 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:40:38 --> Severity: error --> Exception: Call to undefined method Model_home::react() /Applications/AMPPS/www/RMcdo/application/controllers/Home.php 133
+ERROR - 2022-06-09 11:41:12 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:41:14 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:41:15 --> Query error: Unknown column 'userid' in 'field list' - Invalid query: INSERT INTO `tbl_user` (`userid`, `postid`) VALUES (NULL, NULL)
+ERROR - 2022-06-09 11:41:35 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:41:42 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:41:52 --> Query error: Column 'userid' cannot be null - Invalid query: INSERT INTO `tbl_react` (`userid`, `postid`) VALUES (NULL, NULL)
+ERROR - 2022-06-09 11:42:45 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:42:47 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:42:53 --> Query error: Column 'userid' cannot be null - Invalid query: INSERT INTO `tbl_react` (`userid`, `postid`) VALUES (NULL, '1')
+ERROR - 2022-06-09 11:43:10 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:43:12 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:47:23 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:47:25 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:51:02 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:51:03 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:51:12 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:54:46 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 11:54:48 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:54:57 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:55:02 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 11:59:31 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:01:30 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:02:54 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:02:57 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:02:59 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 12:03:06 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:03:22 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:03:24 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 12:03:29 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:03:31 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 12:07:22 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:07:42 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:08:04 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:08:35 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:09:03 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:09:08 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:09:33 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:09:37 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:11:21 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:13:00 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:13:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:13:39 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:14:19 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:14:23 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:19:41 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:19:42 --> Severity: error --> Exception: Call to a member function request() on null /Applications/AMPPS/www/RMcdo/application/controllers/Home.php 200
+ERROR - 2022-06-09 12:19:57 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:19:58 --> Severity: error --> Exception: Call to a member function request() on null /Applications/AMPPS/www/RMcdo/application/controllers/Home.php 200
+ERROR - 2022-06-09 12:20:24 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:33:13 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:33:43 --> Query error: Column 'photovideo' cannot be null - Invalid query: INSERT INTO `tbl_post` (`userid`, `title`, `slug`, `photovideo`, `vimeourl`, `vimeophoto`, `posttype`, `allowcomment`, `privacy`, `status`) VALUES ('1', 'testing123', 'testing123', NULL, '/videos/718563352', NULL, 'video', '1', 'public', 'Active')
+ERROR - 2022-06-09 12:36:07 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:37:22 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:37:56 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:39:25 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:43:16 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:43:44 --> Query error: Column 'photovideo' cannot be null - Invalid query: INSERT INTO `tbl_post` (`userid`, `title`, `slug`, `photovideo`, `vimeourl`, `vimeophoto`, `posttype`, `allowcomment`, `privacy`, `status`) VALUES ('1', 'this is a test', 'this-is-a-test', NULL, '/videos/718565312', NULL, 'video', '1', 'public', 'Active')
+ERROR - 2022-06-09 12:45:54 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:48:59 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:49:23 --> Query error: Column 'photovideo' cannot be null - Invalid query: INSERT INTO `tbl_post` (`userid`, `title`, `slug`, `photovideo`, `vimeourl`, `vimeophoto`, `posttype`, `allowcomment`, `privacy`, `status`) VALUES ('1', 'This is a test video message', 'this-is-a-test-video-message', NULL, '/videos/718566417', NULL, 'video', '1', 'public', 'Active')
+ERROR - 2022-06-09 12:51:28 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:53:44 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:54:38 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:55:04 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 12:55:28 --> Query error: Column 'photovideo' cannot be null - Invalid query: INSERT INTO `tbl_post` (`userid`, `title`, `slug`, `photovideo`, `vimeourl`, `vimeophoto`, `posttype`, `allowcomment`, `privacy`, `status`) VALUES ('1', 'This is a test video message', 'this-is-a-test-video-message', NULL, '/videos/718567725', 'https://i.vimeocdn.com/video/default', 'video', '1', 'public', 'Active')
+ERROR - 2022-06-09 12:57:08 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:00:14 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:00:15 --> Severity: error --> Exception: Unable to complete request. [Could not resolve host: api.vimeo.comhttps] /Applications/AMPPS/www/RMcdo/vendor/vimeo/vimeo-api/src/Vimeo/Vimeo.php 534
+ERROR - 2022-06-09 13:00:57 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:00:58 --> Severity: error --> Exception: Unable to complete request. [Could not resolve host: api.vimeo.comhttps] /Applications/AMPPS/www/RMcdo/vendor/vimeo/vimeo-api/src/Vimeo/Vimeo.php 534
+ERROR - 2022-06-09 13:01:51 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:03:14 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:04:14 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:04:28 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:05:56 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:06:15 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:06:21 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:06:42 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:07:14 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:07:18 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:07:35 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:07:55 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:08:28 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:09:07 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:10:26 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:11:12 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:11:41 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:12:12 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:27:06 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 13:27:21 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 13:33:36 --> Severity: error --> Exception: syntax error, unexpected 'echo' (T_ECHO) /Applications/AMPPS/www/RMcdo/application/views/admin/view_pendingpost.php 79
+ERROR - 2022-06-09 13:33:38 --> Severity: error --> Exception: syntax error, unexpected 'echo' (T_ECHO) /Applications/AMPPS/www/RMcdo/application/views/admin/view_pendingpost.php 79
+ERROR - 2022-06-09 13:35:49 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:10 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:14 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:35 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:42 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:45 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:48 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:36:56 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:37:07 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 13:37:09 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 14:04:19 --> 404 Page Not Found: admin/Post/none
+ERROR - 2022-06-09 14:04:23 --> 404 Page Not Found: admin/Post/none
+ERROR - 2022-06-09 14:11:23 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 14:24:49 --> 404 Page Not Found: Public/uploads
+ERROR - 2022-06-09 15:32:49 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:33:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:38:20 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:40:11 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:44:30 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:44:39 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:46:22 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:46:31 --> 404 Page Not Found: Edit/uploads
+ERROR - 2022-06-09 15:46:31 --> 404 Page Not Found: Edit/home
+ERROR - 2022-06-09 15:46:34 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:46:36 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:46:41 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:46:44 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:46:46 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:46:55 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:47:00 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:47:02 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:47:09 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:47:13 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:47:15 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:48:12 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:48:14 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:48:22 --> 404 Page Not Found: Edit/uploads
+ERROR - 2022-06-09 15:48:23 --> 404 Page Not Found: Edit/home
+ERROR - 2022-06-09 15:48:28 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:48:52 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:48:53 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:50:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 15:50:23 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:50:27 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:50:31 --> 404 Page Not Found: User/uploads
+ERROR - 2022-06-09 15:50:33 --> 404 Page Not Found: User/home
+ERROR - 2022-06-09 15:51:06 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:33:57 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:37:53 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:38:16 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:41:15 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:42:19 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:42:52 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:43:15 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:43:29 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:43:57 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:44:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:44:32 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:55:36 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:57:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:59:17 --> 404 Page Not Found: Uploads/profile1.png
+ERROR - 2022-06-09 23:59:38 --> 404 Page Not Found: Uploads/profile1.png

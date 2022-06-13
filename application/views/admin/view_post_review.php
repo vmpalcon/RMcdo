@@ -8,13 +8,7 @@ if(!$this->session->userdata('id')) {
     <div class="content-header-title">
         <h1>Review Post</h1>
 
-        <div class="content-header-right">
-            <a href="<?php echo base_url(); ?>admin/post" class="btn btn-primary btn-sm">View
-                All</a>
-            <a href="<?php echo base_url(); ?>admin/post/pending"
-                class="btn btn-primary btn-sm">View
-                Pending</a>
-        </div>
+       
     </div>
     <div class="content-header-breadcrumb">
         <div class="breadcrumb-item active"><a
@@ -57,15 +51,15 @@ if(!$this->session->userdata('id')) {
             <div class="box box-info">
                 <div class="box-body">
                     <div class="row reviewvideowrap">
-                        <div class="col-lg-6 rev-videophoto">
+                        <div class="col-lg-4 rev-videophoto">
                             <?php if($post_review['posttype']=='video'):  ?>
-                            <video class="rmc--video"
+                          <!--  <video class="rmc--video"
                                 id="rmc-video-<?php echo $post_review['id']; ?>" loop="" controls>
                                 <source
                                     src="<?php echo base_url(); ?>public/uploads/<?php echo $post_review['photovideo']; ?>"
                                     type="video/mp4" playsinline="">
-                            </video>
-
+                            </video>-->
+                            <div class="loader"> <div class="loader-wheel"></div> </div><iframe src="<?php echo $post_review['photovideo']; ?>&autoplay=0&loop=1&autopause=0&api=1&controls=0&muted=1?playsinline=0" frameborder="0" allow="autoplay;fullscreen;" allowfullscreen="" muted="" playsinline=""> </iframe>
                             <?php endif; ?>
                             <?php if($post_review['posttype']=='image'):
                             
@@ -107,11 +101,29 @@ if(!$this->session->userdata('id')) {
       </div>
                             <?php endif; ?>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-8 videourl-text">
+                        <?php if($post_review['posttype']=='video'):  ?>
+                        <div class="form-group">
+                                <label for="" class="col-sm-3 control-label">Vimeo URL:</label>
+                                <div class="col-sm-9 ">
+                                    <a href="<?php echo $post_review['photovideo']; ?>" target="_blank"><?php echo $post_review['photovideo']; ?></a>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                             <div class="form-group">
-                                <label for="" class="col-sm-3 control-label">Title:</label>
+                                <label for="" class="col-sm-3 control-label">Caption:</label>
                                 <div class="col-sm-9">
                                     <?php echo $post_review['title']; ?>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="" class="col-sm-3 control-label">Tags:</label>
+                                <div class="col-sm-9">
+                           
+                                  <?php foreach($tags_list as $result) {
+                                    echo '<div class="chiptag"> <div class="chip-content">'.$result['tag_title'].'</div> <div class="chip-close"> <svg class="chip-svg" post-id="'.$result['post_id'].'" tag-id="'.$result['tag_id'].'" data-title="'.$result['tag_title'].'" focusable="false" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg> </div> </div>';
+    
+} ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -124,7 +136,7 @@ if(!$this->session->userdata('id')) {
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="" class="col-sm-3 control-label">Video Type:</label>
+                                <label for="" class="col-sm-3 control-label">File Type:</label>
                                 <div class="col-sm-9">
                                     <span class="captxt">
                                         <?php echo $post_review['posttype']; ?>

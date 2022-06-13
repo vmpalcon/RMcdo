@@ -15,7 +15,7 @@ class Login extends CI_Controller
         $error = '';
 
         $data['setting'] = $this->Model_login->get_setting_data();
-
+        date_default_timezone_set($data['setting']['timezone']);
         $logged_in = $this->session->userdata('logged_in');
         if($logged_in)
         {
@@ -68,7 +68,8 @@ class Login extends CI_Controller
                 }
             }
         } else {
-            $this->load->view('admin/view_login',$data);    
+            //$this->load->view('admin/view_login',$data);    
+            redirect(base_url());
         }
         
     }

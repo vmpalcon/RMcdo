@@ -15,7 +15,8 @@ class Setting extends CI_Controller
 		$success = '';
 
 		$data['setting'] = $this->Model_common->get_setting_data();
-
+		
+		date_default_timezone_set($data['setting']['timezone']);
 		$this->load->view('admin/view_header',$data);
 		$this->load->view('admin/view_setting',$data);
 		$this->load->view('admin/view_footer');
@@ -230,12 +231,11 @@ class Setting extends CI_Controller
 
         	$form_data = array(
 				'website_name' => $_POST['website_name'],
-				'preloader_status' => $_POST['preloader_status'],
-				'tawk_live_chat_code' => $_POST['tawk_live_chat_code'],
-				'tawk_live_chat_status' => $_POST['tawk_live_chat_status']
+				'file_size_limit' => $_POST['file_size_limit'],
+				'timezone' => $_POST['timezone']
             );
         	$this->Model_setting->update($form_data);   	
-        	$success = 'Other Setting is updated successfully!';
+        	$success = 'General Setting is updated successfully!';
         	$this->session->set_flashdata('success',$success);
 		    redirect(base_url().'admin/setting');
 		}

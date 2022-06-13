@@ -387,10 +387,65 @@ function itemExists(haystack, needle) {
   return false;
 }
 
+$('.rmc--photovideo-commentvw').scroll(function () {
+  if (scrolloaded == true) {
+    if (
+      $('.rmc--photovideo-commentvw').scrollTop() + $('.rmc--photovideo-commentvw').height() > $('.rmc--commentarea').height() &&
+      commentaction == 'inactive'
+    ) {
+      $('.rmc--photovideo-commentvw .loader').show();
+      commentaction = 'active';
+      commentstart = commentstart + commentlimit;
+
+      setTimeout(function () {
+        var postid = $('.addcommentbtn').attr('data-post');
+        rckymcdo.getcomment(commentlimit, commentstart, postid);
+      }, 1000);
+    }
+  }
+});
+
 var rckymcdo = {
+  loadcomment: function (postid) {
+    window.commentlimit = 6;
+    window.commentstart = 0;
+    window.commentaction = 'inactive';
+    window.scrolloaded = true;
+
+    rckymcdo.getcomment(commentlimit, commentstart, postid);
+  },
+  getcomment: function (commentlimit, commentstart, postid) {
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/getcomment',
+      data: { limit: commentlimit, start: commentstart, postid: postid },
+      cache: false,
+      success: function (data) {
+        if (data.length == 0) {
+          //$('.timeline-preloader').hide();
+          //$('.user-page-inner').append('');
+          $('.rmc--photovideo-commentvw .loader').hide();
+          scrolloaded = false;
+          commentaction = 'active';
+        } else {
+          $('.rmc--photovideo-commentvw .loader').hide();
+          $('.rmc--commentarea ul').append(data);
+          commentaction = 'inactive';
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+  },
+  showerror: function () {
+    var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    var modalToggle = document.getElementById('errorModal');
+    myModal.show(modalToggle);
+  },
   sse: function () {
     // SSE
-    var evtSource = new EventSource('home/notification_data');
+    var evtSource = new EventSource(baseurl + 'home/notification_data');
 
     evtSource.onopen = function () {
       console.log('Connection to server opened.');
@@ -402,11 +457,16 @@ var rckymcdo = {
 
       var notifydata = $('.notificationbtn').attr('data-sent');
 
+      var notifydata = $('.notificationbtn').attr('data-sent');
+      console.log(notifydata);
+
       if (data.sent != null) {
-        if (parseInt(data.sent) != parseInt(notifydata)) {
-          $('.notificationbtn').attr('data-sent', data.sent);
-          $('.newtoast-container').append(
-            `
+        if (notifydata != '') {
+          if (parseInt(data.sent) != parseInt(notifydata)) {
+            $('.notificationbtn').attr('data-sent', data.sent);
+
+            $('.newtoast-container').append(
+              `
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000" >
       <div class="toast-header">
   <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#ff4a00"></rect></svg>
@@ -416,20 +476,21 @@ var rckymcdo = {
   </div>
         <div class="toast-body">
          ` +
-              data.notification.title +
-              `
+                data.notification.title +
+                `
         </div>
       </div>
     `,
-          );
+            );
 
-          $('.newtoast-container .toast').each(function (index, e) {
-            $(e).toast('show');
-          });
+            $('.newtoast-container .toast').each(function (index, e) {
+              $(e).toast('show');
+            });
 
-          $('.newtoast-container .toast').on('hidden.bs.toast', e => {
-            $(e.currentTarget).remove();
-          });
+            $('.newtoast-container .toast').on('hidden.bs.toast', e => {
+              $(e.currentTarget).remove();
+            });
+          }
         }
       }
 
@@ -464,9 +525,11 @@ var rckymcdo = {
     };
   },
   resetfileupload: function () {
-    $('.info-star').html(
+    $('.filewrapper').show();
+    $('.generating-preview').html('');
+    /*$('.info-star').html(
       `<h5>Select Video / Image to upload</h5> <p>MP4 or WebM<br /> 720x1280 resolution or higher<br /> Up to 10 minutes<br /> Less than 2 GB</p> <div><button type="button" class="btn btn-primary" onclick="rckymcdo.triggerupload(this)"> Select File</button></div>`,
-    );
+    );*/
   },
   search: function (objects, title) {
     var results = [];
@@ -482,48 +545,49 @@ var rckymcdo = {
     return results;
   },
   postvideo: function () {
-    var profilephoto = 'uploads/header-profile.png',
-      profilename = 'Jtnsmth',
-      caption = $('.txtcaption').val(),
-      isvideoimg = $('.videotype').val(),
-      postvideo = $('#previewvideo').find('source').attr('src');
-
-    let imglist = [];
-    $('.carousel-inner .carousel-item').each(function () {
-      imglist.push($(this).find('img').attr('src'));
-    });
-
-    var output = {
-      profilephoto: profilephoto,
-      profilename: profilename,
-      caption: caption,
-      isvideoimg: isvideoimg,
-      postvideo: postvideo,
-      imglist: imglist,
-      postvideoform: true,
-    };
     rckymcdo.preloader('show');
-
+    var caption = $('.txtcaption').val(),
+      videotype = $('select[name="posttype"]').val(),
+      privacytype = $('select[name="privacytype"]').val(),
+      tags = $('input[name="tags"]').val(),
+      status = $('select[name="status"]').val(),
+      newstatus = 'Pending',
+      allowcomment = 1;
+    if (tags.length != 0) {
+      tags = tags;
+    }
+    if ($('input[name="iscomment"]').is(':checked')) {
+      allowcomment = 1;
+    } else {
+      allowcomment = 0;
+    }
+    if (status === undefined) {
+      newstatus = 'Pending';
+    } else {
+      newstatus = status;
+    }
     var formData = new FormData();
-    var filesLength = document.getElementById('video_upload').files.length;
-    var title = $('#submit_post').find('input[name="caption"]').val(),
-      videotype = $('#submit_post').find('input[name="videotype"]').val(),
-      privacytype = $('#submit_post').find('select[name="privacytype"]').val();
+    var filesLength = document.getElementById('photo_upload').files.length;
 
-    formData.append('title', title);
+    formData.append('title', caption);
+    formData.append('tags', tags);
     formData.append('isvideoimg', videotype);
     formData.append('privacytype', privacytype);
+    formData.append('status', newstatus);
+    formData.append('allowcomment', allowcomment);
     formData.append('postvideoform', true);
+    formData.append('videofile', document.getElementById('video_upload').files[0]);
     for (var i = 0; i < filesLength; i++) {
-      formData.append('files[]', document.getElementById('video_upload').files[i]);
+      formData.append('files[]', document.getElementById('photo_upload').files[i]);
     }
+
+    console.log(formData);
+    var form = $('#submit_post');
+    var actionUrl = form.attr('action');
 
     $('.btndiscardvideo').prop('disabled', true);
     $('.btnpostvideo').prop('disabled', true);
     $('.btnpostvideo').addClass('button--loading');
-    var form = $('#submit_post');
-    var actionUrl = form.attr('action');
-    console.log(actionUrl);
     $.ajax({
       type: 'POST',
       url: actionUrl,
@@ -532,20 +596,24 @@ var rckymcdo = {
       cache: false,
       processData: false,
       success: function (data) {
+        console.log(data);
         $('.btnpostvideo').removeClass('button--loading');
         $('.btndiscardvideo').prop('disabled', false);
         $('.btnpostvideo').prop('disabled', false);
-
         rckymcdo.preloader('hide');
-        rckymcdo.resetupload();
 
         data = JSON.parse(data);
         console.log(data);
         if (data.error == false) {
-          $('.msgoutput').html(`<div class="alert alert-success alert-dismissible fade show" role="alert">
-          Your post has been submitted. This post is subject for approval and will informed you once approved.
+          $('.msgoutput').html(
+            `<div class="alert alert-success alert-dismissible fade show" role="alert">
+          ` +
+              data.message +
+              `
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>`);
+        </div>`,
+          );
+          rckymcdo.resetupload();
         } else {
           $('.msgoutput').html(`<div class="msgform">` + data.message + `</div>`);
         }
@@ -560,20 +628,26 @@ var rckymcdo = {
     vid.pause();
     $('#previewvideo').html('');
     $('.load-area').show();
-    $('.preview-area').removeClass('active');
-    rckymcdo.resetfileupload();
+    $('.preview-area').hide();
+
+    $('.filewrapper').show();
+    $('.generating-preview').html('');
+    document.getElementById('video_upload').value = null;
+
     $('.photopreview-area').find('.carousel-indicators').html('');
     $('.photopreview-area').find('.carousel-inner').html('');
     $('#alertreplaceModal').modal('hide');
     $('.btnpostvideo').prop('disabled', true);
   },
   resetupload: function () {
-    var vid = document.getElementById('previewvideo');
-    vid.pause();
+    $('.filetypeallow').html('<b>MP4</b>, <b>WebM</b>');
     $('#previewvideo').html('');
     $('.load-area').show();
-    $('.preview-area').removeClass('active');
-    rckymcdo.resetfileupload();
+    $('.preview-area').hide();
+
+    $('.filewrapper').show();
+    $('.generating-preview').html('');
+
     $('.btnpostvideo').prop('disabled', true);
     $('.photopreview-area').find('.carousel-indicators').html('');
     $('.photopreview-area').find('.carousel-inner').html('');
@@ -643,7 +717,14 @@ var rckymcdo = {
     }
   },
   triggerupload: function () {
-    $('#video_upload').trigger('click');
+    if ($('select[name="posttype"] option:selected').val() == 'video') {
+      $('#video_upload').trigger('click');
+    } else if ($('select[name="posttype"] option:selected').val() == 'image') {
+      $('#photo_upload').trigger('click');
+    } else {
+      alert('invalid selection');
+    }
+    //
   },
   opennotiftab: function (id, _this) {
     $('.notification-menu ul li a').removeClass('active');
@@ -696,10 +777,17 @@ var rckymcdo = {
     }, 3000);
   },
   copylink: function (_this) {
+    var val = $(_this).parent().find('input').val();
+
     var $temp = $('<input>');
-    $('body').append($temp);
-    $temp.val('http://rockymountain.co/rmxmcdo/?fbclid=I').select();
+    if ($('#videoshowModal').is(':visible')) {
+      $('#videoshowModal').append($temp);
+    } else {
+      $('body').append($temp);
+    }
+    $temp.val(val).select();
     document.execCommand('copy');
+
     $temp.remove();
     $('.toast-container').append(`
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="500" >
@@ -810,7 +898,7 @@ function doneTyping() {
           if (i <= 5) {
             $('#searchresult')
               .find('.searchlikeresult')
-              .append('<li><a href="javascript:void(0)" class="searchhelper">' + b[i] + '</a></li>');
+              .append('<li><a href="' + baseurl + 'tags/' + b[i] + '" class="searchhelper">' + b[i] + '</a></li>');
           }
         }
         $('#searchresult').find('.searchuserlist').html('');
@@ -820,7 +908,11 @@ function doneTyping() {
             $('#searchresult')
               .find('.searchuserlist')
               .append(
-                `<li><a href="javascript:void(0)" class="searchuser">
+                `<li><a href="` +
+                  baseurl +
+                  'user/' +
+                  data.users[x].username +
+                  `" class="searchuser">
               <div class="searchimg-wrap"><img
                     src="` +
                   baseurl +
@@ -891,7 +983,143 @@ $(function () {
   });
 });
 
+if ($('#photo_upload')[0]) {
+  const inputimg = document.getElementById('photo_upload');
+
+  inputimg.addEventListener('change', function (e) {
+    console.log(e);
+    $('.msgoutput').html('');
+    $('.filewrapper').hide();
+    $('.generating-preview').html(`<div class="circular"> <div class="inner"></div>
+    <div class="number">100%</div> <div class="circle">
+    <div class="bar left"> <div class="progress"></div> </div> <div class="bar right">
+    <div class="progress"></div> </div>
+    </div> </div><div style="margin-top: 10px;">Rendering video/photo please wait...</div>`);
+    const numb = document.querySelector('.number');
+    let counter = 0;
+    const files = this.files || [];
+    var interval = setInterval(() => {
+      if (counter == 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          var allfiles = e.target.files;
+          rckymcdo.resetfileupload();
+
+          if (files.length >= 6) {
+            $('.msgoutput').html('<div class="msgform">Maximum 5 Photos are allowed</div>');
+            document.getElementById('photo_upload').value = '';
+            return true;
+          }
+
+          var err = 0;
+          $('.videotype').val('image');
+          var filerr = 0;
+          $('.generating-preview').html('');
+          $('.photopreview-area').show();
+          $('.load-area').hide();
+          $('.btnpostvideo').prop('disabled', false);
+          for (var i = 0, f; (f = allfiles[i]); i++) {
+            loadMime(f, function (mime) {
+              if (mime == 'unknown') {
+                filerr += 1;
+              }
+            });
+            var reader = new FileReader();
+            var count = 0;
+            reader.onload = function (event) {
+              if (err == 0) {
+                $('#carouselRmxmcdo')
+                  .find('.carousel-inner')
+                  .append('<div class="carousel-item" data-bs-interval="10000"> <img src="' + event.target.result + '" alt="..."> </div>');
+                $('#carouselRmxmcdo').find('.carousel-inner > .carousel-item:first-child').addClass('active');
+
+                if (files.length == 1) {
+                  $('#carouselRmxmcdo').find('button').hide();
+                } else {
+                  $('.carousel-indicators').append(
+                    `<button type="button" data-bs-target="#carouselRmxmcdo"
+              data-bs-slide-to="` +
+                      count +
+                      `" aria-current="true" aria-label="Slide"></button>`,
+                  );
+
+                  $('.carousel-indicators button:first-child').addClass('active');
+
+                  $('#carouselRmxmcdo').find('button').show();
+                }
+
+                //$($.parseHTML('<img>')).attr('src', event.target.result).appendTo($('.photopreview-area'));
+
+                count++;
+              }
+            };
+
+            reader.readAsDataURL(f);
+          }
+        }, 1500);
+      } else {
+        counter += 1;
+        numb.textContent = counter + '%';
+      }
+    }, 15);
+  });
+}
 if ($('#video_upload')[0]) {
+  const input = document.getElementById('video_upload');
+  const video = document.getElementById('previewvideo');
+  const videoSource = document.createElement('source');
+
+  input.addEventListener('change', function (e) {
+    console.log(e);
+    $('.msgoutput').html('');
+    $('.filewrapper').hide();
+    $('.generating-preview').html(`<div class="circular"> <div class="inner"></div>
+    <div class="number">100%</div> <div class="circle">
+    <div class="bar left"> <div class="progress"></div> </div> <div class="bar right">
+    <div class="progress"></div> </div>
+    </div> </div><div style="margin-top: 10px;">Rendering video/photo please wait...</div>`);
+    const numb = document.querySelector('.number');
+    let counter = 0;
+    const files = this.files;
+    const currfile = e.target.files[0];
+
+    var interval = setInterval(() => {
+      if (counter == 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            var newtitle = currfile.name.split('.')[0];
+            $('.videopreview-title').html(currfile.name);
+            if ($('input.txtcaption').val().length === 0) {
+              $('input.txtcaption').val(newtitle);
+              $('#rchars').text($('input.txtcaption').val().length);
+            }
+            $('.btnpostvideo').prop('disabled', false);
+            videoSource.setAttribute('src', e.target.result);
+            video.appendChild(videoSource);
+            video.load();
+            video.play();
+            $('.filewrapper').show();
+            $('.generating-preview').html('');
+            $('.preview-area').show();
+            $('.load-area').hide();
+          };
+
+          reader.onprogress = function (e) {
+            console.log('progress: ', Math.round((e.loaded * 100) / e.total));
+          };
+
+          reader.readAsDataURL(currfile);
+        }, 1500);
+      } else {
+        counter += 1;
+        numb.textContent = counter + '%';
+      }
+    }, 15);
+  });
+}
+/*if ($('#video_upload')[0]) {
   const input = document.getElementById('video_upload');
   const video = document.getElementById('previewvideo');
   const videoSource = document.createElement('source');
@@ -1077,9 +1305,134 @@ if ($('#video_upload')[0]) {
     }, 15);
   });
 }
+*/
+$('#videoshowModal').on('shown.bs.modal', function (event) {
+  $('.rmc--commentarea ul').html('');
+  var iscomment = $(event.relatedTarget).attr('data-focus');
+  var postid = $(event.relatedTarget).attr('data-id');
+  if (typeof iscomment !== 'undefined' && iscomment !== false) {
+    if ($('.rmc--photovideo-msgtool').find('input')[0]) {
+      $('.rmc--photovideo-msgtool').find('input')[0].focus();
+    }
+  }
+  if (typeof postid !== 'undefined' && postid !== false) {
+    var mydata = {
+      postid: postid,
+      iscomment: true,
+    };
+    if ($(this).find('.addcommentbtn')[0]) {
+      $(this).find('.addcommentbtn').attr('data-post', postid);
+    }
+    $(this).find('.likecheckbox').attr('data-post', postid);
+    $this = $(this);
+    console.log(mydata);
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/showpost',
+      data: mydata,
+      success: function (output) {
+        output = JSON.parse(output);
+        console.log(output);
+        if (output.error == false) {
+          if (output.data.isverified == '1') {
+            $isverified = '<span><img src="' + baseurl + 'public/assets/img/svg/user-check.svg" alt=""></span>';
+          } else {
+            $isverified = '';
+          }
+          //$this.find('.rmc--photovideo-commentvw').html('');
 
-$('#videoshowModal').on('show.bs.modal', function (event) {
-  $('.rmc--photovideo-source').html('');
+          rckymcdo.loadcomment(output.data.id);
+          if (output.data.posttype == 'video') {
+            $mypostcontent =
+              '<div class="loader"> <div class="loader-wheel"></div> </div><iframe src="' +
+              output.data.photovideo +
+              '&autoplay=1&loop=1&autopause=0&api=1&controls=0&muted=0?playsinline=0" frameborder="0" allow="autoplay;fullscreen;" allowfullscreen="" playsinline=""> </iframe>';
+            $this.find('.rmc--photovideo-source').html($mypostcontent);
+          } else if (output.data.posttype == 'image') {
+            console.log(output.data.photovideo);
+            $('#videoshowModal').find('.rmc--photovideo-source')
+              .html(`<div id="carouselRmxmcdo-modal" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-indicators">
+             
+              </div>
+              <div class="carousel-inner">
+        
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselRmxmcdo-modal" data-bs-slide="prev">
+                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                 <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselRmxmcdo-modal" data-bs-slide="next">
+                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                 <span class="visually-hidden">Next</span>
+              </button>
+           </div>`);
+
+            for (var i = 0; i <= output.data.photovideo.length; i++) {
+              if (output.data.photovideo[i] != undefined) {
+                $('#videoshowModal')
+                  .find('.carousel-inner')
+                  .append(
+                    '<div class="carousel-item" data-bs-interval="10000" data-filetype="image"> <img src="' +
+                      baseurl +
+                      'public/uploads/' +
+                      output.data.photovideo[i] +
+                      '" alt="..."> </div>',
+                  );
+                $('#videoshowModal')
+                  .find('.carousel-indicators')
+                  .append(
+                    `<button type="button" data-bs-target="#carouselRmxmcdo-modal"
+            data-bs-slide-to="` +
+                      i +
+                      `" aria-current="true" aria-label="Slide"></button>`,
+                  );
+
+                $('#videoshowModal #carouselRmxmcdo-modal').find('button').show();
+              }
+            }
+            $('#videoshowModal #carouselRmxmcdo-modal').find('.carousel-indicators button:first-child').addClass('active');
+            $('#videoshowModal #carouselRmxmcdo-modal').find('.carousel-inner > .carousel-item:first-child').addClass('active');
+
+            if (output.data.photovideo.length == 1) {
+              $('#videoshowModal #carouselRmxmcdo-modal').find('button').hide();
+            }
+          }
+
+          $this.find('.total-like').text(output.data.totalreact);
+          $this
+            .find('.rmc--pv-linktool')
+            .find('input')
+            .val(baseurl + 'post/' + output.data.slug);
+          console.log(output.data);
+          if (output.data.isreact == '1') {
+            $this.find('.likecheckbox > div input').attr('checked', true);
+          } else {
+            $this.find('.likecheckbox > div input').attr('checked', false);
+          }
+          //$this.find('.total-comment').text(output.data.totalreact);
+          $('.rmcpop-user').html(output.data.username + ' ' + $isverified);
+          if (output.data.photo != '') {
+            $photo = baseurl + 'public/uploads/' + output.data.photo;
+          } else {
+            $photo = baseurl + 'public/assets/img/no-photo.jpg';
+          }
+          $('.rmcpop-img').attr('src', $photo);
+          $('.rmcpop-title').html(
+            output.data.firstname + ' ' + output.data.lastname + ' &middot; ' + timeAgo(new Date(output.data.created_at)),
+          );
+          $this.find('.rmcpop-message').html(output.data.title);
+          //$('.rmcpop-message').html($(event.relatedTarget).parent().parent().parent().parent().find('.rmc--profile-title').html());
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+  } else {
+    rckymcdo.showerror();
+  }
+  /* $('.rmc--photovideo-source').html('');
   var getfiletype = $(event.relatedTarget).attr('data-filetype');
 
   if (typeof getfiletype !== 'undefined' && preview !== getfiletype) {
@@ -1091,7 +1444,7 @@ $('#videoshowModal').on('show.bs.modal', function (event) {
         $('.rmc--photovideo-blurbg').css('background', "url('" + preview + "')");
       }
       $('#videoshowModal .rmc--photovideo-source').html(
-        `<video id="popupvideoplayer" loop="" autoplay="" controls>
+        `<video id="popupvideoplayer" loop="" autoplay="" playsinline controls>
       <source src="` +
           source +
           `" type="video/mp4" playsinline>
@@ -1124,14 +1477,17 @@ $('#videoshowModal').on('show.bs.modal', function (event) {
         $(event.relatedTarget).parent().parent().parent().parent().parent().parent().find('.rmc--profile-title').html(),
       );
     }
-  }
+  }*/
 });
 $('#videoshowModal').on('hide.bs.modal', function (event) {
   $('.rmc--photovideo-blurbg').removeAttr('style');
-  if (document.getElementById('popupvideoplayer')) {
+  $('#videoshowModal').find('.rmc--photovideo-source').html('');
+  /*if (document.getElementById('popupvideoplayer')) {
     var vid = document.getElementById('popupvideoplayer');
     vid.pause();
-  }
+  }*/
+
+  commentaction = 'inactive';
 });
 $('#loginModal').on('show.bs.modal', function (event) {
   var checkpage = $(event.relatedTarget).attr('data-src');
@@ -1257,7 +1613,35 @@ $(document).ready(function () {
 
   var limit = 3;
   var start = 0;
-  var action = 'inactive';
+  var action = 'inactive',
+    tagaction = 'inactive',
+    useraction = 'inactive';
+
+  var xlimit = 6;
+  var xstart = 0;
+
+  function userload_data(limit, start, username) {
+    $.ajax({
+      url: baseurl + 'home/fetchpost',
+      method: 'POST',
+      data: { limit: xlimit, start: xstart, username: username },
+      cache: false,
+      success: function (data) {
+        console.log(data.length);
+
+        if (data.length == 0) {
+          $('.timeline-preloader').hide();
+          //$('.user-page-inner').append('');
+          useraction = 'active';
+        } else {
+          $('.timeline-preloader').hide();
+          $('.user-page-inner').append(data);
+
+          useraction = 'inactive';
+        }
+      },
+    });
+  }
 
   function load_data(limit, start) {
     $.ajax({
@@ -1280,19 +1664,84 @@ $(document).ready(function () {
     });
   }
 
-  if (action == 'inactive') {
-    action = 'active';
-    load_data(limit, start);
+  function tagload_data(limit, start, tagtitle) {
+    $.ajax({
+      url: baseurl + 'home/fetchtags',
+      method: 'POST',
+      data: { limit: limit, start: start, tag_title: tagtitle },
+      cache: false,
+      success: function (data) {
+        if (data == '') {
+          $('.timeline-preloader').hide();
+
+          $('.tag-timeline').append('<div class="endtimeline"><h3>No More Result Found</h3></div>');
+          tagaction = 'active';
+        } else {
+          $('.timeline-preloader').hide();
+          $('.tag-timeline').append(data);
+
+          tagaction = 'inactive';
+        }
+      },
+    });
+  }
+
+  if ($('.main-timeline')[0]) {
+    if (action == 'inactive') {
+      action = 'active';
+      load_data(limit, start);
+    }
+  }
+
+  if ($('.user-page-inner')[0]) {
+    if (useraction == 'inactive') {
+      useraction = 'active';
+      $username = window.location.pathname.split('/').pop();
+
+      userload_data(xlimit, xstart, $username);
+    }
+  }
+
+  if ($('.tag-timeline')[0]) {
+    if (tagaction == 'inactive') {
+      tagaction = 'active';
+      tagtitle = $('.tag-timelinetitle').attr('data-title');
+      tagload_data(limit, start, tagtitle);
+    }
   }
 
   $(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() > $('.timeline').height() && action == 'inactive') {
-      $('.timeline-preloader').show();
-      action = 'active';
-      start = start + limit;
-      setTimeout(function () {
-        load_data(limit, start);
-      }, 1000);
+    if ($('.main-timeline')[0]) {
+      if ($(window).scrollTop() + $(window).height() > $('.timeline').height() && action == 'inactive') {
+        $('.timeline-preloader').show();
+        action = 'active';
+        start = start + limit;
+        setTimeout(function () {
+          load_data(limit, start);
+        }, 1000);
+      }
+    }
+    if ($('.tag-timeline')[0]) {
+      if ($(window).scrollTop() + $(window).height() > $('.timeline').height() && tagaction == 'inactive') {
+        $('.timeline-preloader').show();
+        tagaction = 'active';
+        start = start + limit;
+        tagtitle = $('.tag-timelinetitle').attr('data-title');
+        setTimeout(function () {
+          tagload_data(limit, start, tagtitle);
+        }, 1000);
+      }
+    }
+    if ($('.user-page-inner')[0]) {
+      if ($(window).scrollTop() + $(window).height() > $('.user-page-wrapper').height() && useraction == 'inactive') {
+        $('.user-section .timeline-preloader').show();
+        useraction = 'active';
+        xstart = xstart + xlimit;
+        setTimeout(function () {
+          $link = window.location.pathname.split('/').pop();
+          userload_data(xlimit, xstart, $username);
+        }, 1000);
+      }
     }
   });
 });
@@ -1445,4 +1894,143 @@ function subtractMinutes(numOfMinutes, date = new Date()) {
   date.setMinutes(date.getMinutes() - numOfMinutes);
 
   return date;
+}
+
+if ($('[name=tags]')[0]) {
+  $('[name=tags]').tagify({
+    pattern: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    delimiters: ',| ',
+  });
+}
+
+var maxLength = 150;
+$('.txtcaption').keyup(function () {
+  var leng = $(this).val().length;
+  $('#rchars').text(leng);
+});
+
+$('select[name="posttype"]').on('change', function () {
+  if (this.value == 'image') {
+    $('.filetypeallow').html('<b>JPG</b>, <b>PNG</b>, <b>GIF</b>');
+  } else if (this.value == 'video') {
+    $('.filetypeallow').html('<b>MP4</b>, <b>WebM</b>');
+  }
+});
+
+$(document).on('click', '.likecheckbox', function (e) {
+  e.preventDefault();
+  var id = $(this).attr('data-post');
+  var issublike = $(this).attr('issublike');
+  if (id !== 'undefined' && id !== false) {
+    var mydata = {
+      postid: id,
+      reactpost: true,
+    };
+    var $this = $(this);
+    console.log($this);
+
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/react',
+      data: mydata,
+      success: function (data) {
+        data = JSON.parse(data);
+        console.log(data);
+        var totallike = parseInt($this.find('.total-like').text());
+        console.log(totallike);
+
+        if (data.error == true) {
+          if (data.login == false) {
+            var myModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            var modalToggle = document.getElementById('loginModal');
+            myModal.show(modalToggle);
+          } else {
+            rckymcdo.showerror();
+          }
+        } else {
+          if (data.data == null) {
+            $this.find('input').attr('checked', false);
+            totallike = totallike - 1;
+            $this.find('.total-like').text(totallike);
+
+            if (typeof issublike !== 'undefined' && issublike !== false) {
+              $('#likecheckbox' + id).attr('checked', false);
+              $('#likecheckbox' + id)
+                .parent()
+                .parent()
+                .find('.total-like')
+                .text(totallike);
+            }
+          } else {
+            $this.find('input').attr('checked', true);
+            totallike = totallike + 1;
+            $this.find('.total-like').text(totallike);
+
+            if (typeof issublike !== 'undefined' && issublike !== false) {
+              $('#likecheckbox' + id).attr('checked', true);
+              $('#likecheckbox' + id)
+                .parent()
+                .parent()
+                .find('.total-like')
+                .text(totallike);
+            }
+          }
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+  } else {
+    alert('Theres an error while, getting post data please refresh the page.');
+  }
+});
+
+/*$(document).on('click', '.rmcbtncomment', function (e) {
+  e.preventDefault();
+  var myModal = new bootstrap.Modal(document.getElementById('videoshowModal'));
+  var modalToggle = document.getElementById('videoshowModal');
+  myModal.show(modalToggle);
+});*/
+
+$(document).on('click', '.addcommentbtn', function (e) {
+  var postid = $(this).attr('data-post');
+  var comment = $(this).parent().find('[name="comment"]').val();
+  if (typeof postid !== 'undefined' && postid !== false) {
+    console.log(postid);
+    var mydata = {
+      postid: postid,
+      comment: comment,
+      commentform: true,
+    };
+    var $this = $(this);
+    console.log($this);
+    console.log(commentaction);
+    $.ajax({
+      type: 'POST',
+      url: baseurl + 'home/addcomment',
+      data: mydata,
+      success: function (data) {
+        data = JSON.parse(data);
+        console.log(data);
+        if (data.error == false) {
+          $this.parent().find('input[name="comment"]').val('');
+
+          $('.rmc--commentarea ul').html('');
+          rckymcdo.loadcomment(postid);
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+  } else {
+    rckymcdo.showerror();
+  }
+});
+
+var pagepostid = $('.pagepost-section').attr('data-postid');
+console.log(pagepostid);
+if (typeof pagepostid !== 'undefined' && pagepostid !== false) {
+  rckymcdo.loadcomment(pagepostid);
 }

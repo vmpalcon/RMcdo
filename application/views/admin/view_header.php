@@ -70,7 +70,7 @@ if($this->session->userdata('role')=='User'){
 	<li class="nav-item dropdown <?php if( ($class_name == 'users') ) {echo 'active';} ?>">
         <a href="#" class="nav-link has-dropdown"><i class="fa fa-users"></i> <span>Users</span></a>
         <ul class="dropdown-menu">
-          <li><a class="nav-link <?php if( ($segment_2 == 'users' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/users/add">Add User</a></li>
+         <!-- <li><a class="nav-link <?php if( ($segment_2 == 'users' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/users/add">Add User</a></li>-->
           <li><a class="nav-link <?php if( ($segment_2 == 'users' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/users">Manage Users</a></li>
         </ul>
       </li>
@@ -79,15 +79,16 @@ if($this->session->userdata('role')=='User'){
         <ul class="dropdown-menu">
           <li><a class="nav-link <?php if( ($segment_2 == 'post' && $segment_3 == 'pending') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/post/pending">For Approval</a></li>
           <li><a class="nav-link <?php if( ($segment_2 == 'post' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/post">All Post</a></li>
+          <li><a class="nav-link <?php if( ($segment_2 == 'post' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>upload">Add Post</a></li>
         </ul>
       </li>
-	<li class="nav-item dropdown <?php if( ($class_name == 'pages') ) {echo 'active';} ?>">
+	<!--<li class="nav-item dropdown <?php if( ($class_name == 'pages') ) {echo 'active';} ?>">
         <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i> <span>Pages</span></a>
         <ul class="dropdown-menu">
           <li><a class="nav-link <?php if( ($segment_2 == 'pages' && $segment_3 == 'add') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/pages/add">Add New Page</a></li>
           <li><a class="nav-link <?php if( ($segment_2 == 'pages' && $segment_3 == '') ) {echo 'active';} ?>" href="<?php echo base_url(); ?>admin/pages">Manage Pages</a></li>
         </ul>
-      </li>
+      </li>-->
 	<li class="menu-header">General Settings </li>
 	<li class="nav-item <?php if( ($class_name == 'setting') ) {echo 'active';} ?>">
 		<a href="<?php echo base_url(); ?>admin/setting">

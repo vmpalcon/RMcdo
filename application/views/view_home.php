@@ -28,7 +28,7 @@
             <div class="rmc--auth-mainleftpane">
                <div class="rmc--auth-profile">
                   <div class="rmc--auth-profile-img">
-                     <a href="#"><?php if($this->session->userdata('photo') == ''): ?>
+                     <a href="<?php echo base_url(); ?>user/<?php echo $this->session->userdata('username'); ?>"><?php if($this->session->userdata('photo') == ''): ?>
 									<img src="<?php echo base_url(); ?>public/assets/img/no-photo.jpg" alt="user photo">
 								<?php else: ?>
 									<img src="<?php echo base_url(); ?>public/uploads/<?php echo $this->session->userdata('photo'); ?>" alt="user photo">

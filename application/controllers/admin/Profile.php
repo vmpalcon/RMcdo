@@ -12,7 +12,7 @@ class Profile extends CI_Controller
 	public function index()
 	{
 		$data['setting'] = $this->Model_common->get_setting_data();
-
+		date_default_timezone_set($data['setting']['timezone']);
 		$this->load->view('admin/view_header',$data);
 		$this->load->view('admin/view_profile',$data);
 		$this->load->view('admin/view_footer');

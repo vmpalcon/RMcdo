@@ -13,6 +13,7 @@ class Pages extends MY_Controller
 	public function index()
 	{
 		$data['setting'] = $this->Model_common->get_setting_data();
+		date_default_timezone_set($data['setting']['timezone']);
 		$data['page_dynamic'] = $this->Model_pages->show();
 
 		$this->load->view('admin/view_header',$data);

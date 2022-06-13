@@ -1,5 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require FCPATH.'/vendor/autoload.php';
+use Vimeo\Vimeo;
 
 class Post extends MY_Controller 
 {
@@ -13,6 +15,7 @@ class Post extends MY_Controller
 	public function index()
 	{
 		$data['setting'] = $this->Model_common->get_setting_data();
+		date_default_timezone_set($data['setting']['timezone']);
 		$data['post_dynamic'] = $this->Model_post->show();
 
 		$this->load->view('admin/view_header',$data);
@@ -24,10 +27,65 @@ class Post extends MY_Controller
 	{
 		$data['setting'] = $this->Model_common->get_setting_data();
 		$data['pendingpost_dynamic'] = $this->Model_post->pending();
+		$client = new Vimeo("6fcf4423afd5ed4e8bb3a24cecba4f4994f54f16", "8s4ZU+FkIitVWMk8ZZoVGCs6yzzV+c98gzWk2Bf5nlQiL4kWH68DbgCrNmKlN7ansc5wDsR54mYBN22/H3DJKs6IBI+mqrUYwDL4L+WDhfb7dKRntXoJp5u4ngkXFRV0", "45a160291ecf9e0ce7c78455219c5b5d");
+		
+	
+
+        foreach ($data['pendingpost_dynamic'] as $row) {
+			
+			if($row['vimeophoto']=='none'){
+				$photourl = $client->request($row['vimeourl'], array(), 'GET');
+				if($photourl['body']['pictures']['active']==true){
+					
+					$formsent = array(
+						'vimeophoto' => $photourl['body']['pictures']['base_link'],
+					);
+	
+					$this->Model_post->update($row['id'],$formsent);
+				} 
+			}
+	
+		}
+		
 
 		$this->load->view('admin/view_header',$data);
 		$this->load->view('admin/view_pendingpost',$data);
 		$this->load->view('admin/view_footer');
+	}
+
+	public function add()
+	{
+		$data['setting'] = $this->Model_common->get_setting_data();
+		$this->load->view('admin/view_header',$data);
+		$this->load->view('admin/view_post_add',$data);
+		$this->load->view('admin/view_footer');
+		
+
+		/* $client = new Vimeo("6fcf4423afd5ed4e8bb3a24cecba4f4994f54f16", "8s4ZU+FkIitVWMk8ZZoVGCs6yzzV+c98gzWk2Bf5nlQiL4kWH68DbgCrNmKlN7ansc5wDsR54mYBN22/H3DJKs6IBI+mqrUYwDL4L+WDhfb7dKRntXoJp5u4ngkXFRV0", "62442fc761e43f2691ee43e043ad644f");
+
+		$response = $client->request('/tutorial', array(), 'GET');
+		print_r($response); */
+	}
+
+	public function deletetag(){
+		$post_id = $this->input->post('post_id', true);
+		$tag_id = $this->input->post('tag_id', true);
+		if(isset($_POST['formremovetag'])) 
+		{
+			
+
+			$tagdata = $this->Model_post->deletetagpost($post_id,$tag_id);
+			
+			$msg = 'Successfully untagged post.';
+			$this->session->set_flashdata('success',$msg);
+
+					$outputtag = array(
+						'error' => false,
+						'message' => $msg
+						
+					);
+					echo json_encode($outputtag);
+		}
 	}
 
 	public function review($id)
@@ -124,6 +182,9 @@ class Post extends MY_Controller
 
 		} else {
 			$data['post_review'] = $this->Model_post->getData($id);
+
+			$data['tags_list'] = $this->Model_post->gettagData($id);
+
             $this->load->view('admin/view_header',$data);
 			$this->load->view('admin/view_post_review',$data);
 			$this->load->view('admin/view_footer');

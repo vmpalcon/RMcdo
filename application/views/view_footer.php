@@ -207,27 +207,23 @@
                   </div>
                   <div class="rmc--photovideo-profile">
                      <div class="rmc--profile-photo">
-                        <div><a href="#"><img src="uploads/profile1.png" class="rmcpop-img"
+                        <div><a href="#"><img src="<?php echo base_url(); ?>public/assets/img/no-photo.jpg" class="rmcpop-img"
                                  alt=""></a></div>
                      </div>
                      <div>
-                        <div class="rmc--profile-username rmcpop-user"><a href="#">Jamesmth</a>
-                        </div>
-                        <div class="rmc--profile-title rmcpop-title">Jamesmth 2022-11-12</div>
+                        <div class="rmc--profile-username rmcpop-user"></div>
+                        <div class="rmc--profile-title rmcpop-title"></div>
                      </div>
                   </div>
                   <div class="rmc--photovideo-contentvw">
-                     <div class="rmc--pv-text rmcpop-message">Nature really hit different 🍃
-                        <a href="#">#Nature</a> <a href="#">#tree</a>
-                        <a href="#">#mountain</a> <a href="#">#eagle</a> <a
-                           href="#">#vacationislife</a>
+                     <div class="rmc--pv-text rmcpop-message">
                      </div>
                      <div class="rmc--pv-wraptool">
                         <div class="sharelike-wrap">
                            <div>
-                              <label class="likecheckbox smallsvg" for="likecheckbox1">
+                              <label class="likecheckbox smallsvg" issublike="true" for="">
                                  <div class="label">
-                                    <input type="checkbox" id="likecheckbox1">
+                                    <input type="checkbox" id="">
                                     <div class="heart">
                                        <svg viewBox="0 0 544.582 544.582">
                                           <path d="M448.069,57.839c-72.675-23.562-150.781,15.759-175.721,87.898C247.41,73.522,169.303,34.277,96.628,57.839
@@ -244,7 +240,7 @@
                                  <span class="rmc--snippet-text total-like">0</span>
                               </label>
                            </div>
-                           <div><a href="#" class="sharebtn"> 0</a></div>
+                           <div><a href="#" class="sharebtn total-comment"> 0</a></div>
                         </div>
                         <div class="sharelink-wrap">
                            <ul>
@@ -259,13 +255,19 @@
                      </div>
                      <div class="rmc--pv-linktool">
                         <input type="text" placeholder="Link URL"
-                           value="http://rockymountain.co/rmxmcdo/?fbclid=I" />
+                           value="" />
                         <button type="button" class="btn btn-gray-outline"
                            onclick="rckymcdo.copylink(this)">Copy Link</button>
                      </div>
                   </div>
                   <div class="rmc--photovideo-commentvw">
+                     <div class="rmc--commentarea">
                      <ul>
+
+                     </ul>
+                     </div>
+                  <div class="loader"> <div class="loader-wheel"></div> </div>
+                     <!--<ul>
                         <li>
                            <div class="rmc--pvcomment-header">
                               <div>
@@ -279,17 +281,7 @@
                                  </div>
                                  <div class="rmc--profile-title">Judy Woods</div>
                               </div>
-                              <div>
-                                 <svg width="18" height="16" viewBox="0 0 18 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                       d="M5.5 2C3.5673 2 2 3.49112 2 5.33081C2 6.81587 2.6125 10.3405 8.6416 13.9034C8.7496 13.9666 8.87358 14 9 14C9.12642 14 9.2504 13.9666 9.3584 13.9034C15.3875 10.3405 16 6.81587 16 5.33081C16 3.49112 14.4327 2 12.5 2C10.5673 2 9 4.01867 9 4.01867C9 4.01867 7.4327 2 5.5 2Z"
-                                       stroke="#8E8E8E" stroke-width="2.5" stroke-linecap="round"
-                                       stroke-linejoin="round" /><br />
-                                    0
-                                 </svg>
-
-                              </div>
+                              
                            </div>
                            <div class="rmc--pvcomment-content">
                               someone is living my dream ❤️ gonna fulfill soon
@@ -308,18 +300,7 @@
                                  </div>
                                  <div class="rmc--profile-title">Ford Cooke</div>
                               </div>
-                              <div>
-                                 <svg width="18" height="16" viewBox="0 0 18 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                       d="M5.5 2C3.5673 2 2 3.49112 2 5.33081C2 6.81587 2.6125 10.3405 8.6416 13.9034C8.7496 13.9666 8.87358 14 9 14C9.12642 14 9.2504 13.9666 9.3584 13.9034C15.3875 10.3405 16 6.81587 16 5.33081C16 3.49112 14.4327 2 12.5 2C10.5673 2 9 4.01867 9 4.01867C9 4.01867 7.4327 2 5.5 2Z"
-                                       stroke="#8E8E8E" stroke-width="2.5" stroke-linecap="round"
-                                       stroke-linejoin="round" />
-                                    <br />
-                                    0
-                                 </svg>
-
-                              </div>
+                              
                            </div>
                            <div class="rmc--pvcomment-content">
                               someone is living my dream &lt;33 gonna fulfill soon </div>
@@ -337,29 +318,22 @@
                                  </div>
                                  <div class="rmc--profile-title">Grayson Shepard</div>
                               </div>
-                              <div>
-                                 <svg width="18" height="16" viewBox="0 0 18 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                       d="M5.5 2C3.5673 2 2 3.49112 2 5.33081C2 6.81587 2.6125 10.3405 8.6416 13.9034C8.7496 13.9666 8.87358 14 9 14C9.12642 14 9.2504 13.9666 9.3584 13.9034C15.3875 10.3405 16 6.81587 16 5.33081C16 3.49112 14.4327 2 12.5 2C10.5673 2 9 4.01867 9 4.01867C9 4.01867 7.4327 2 5.5 2Z"
-                                       stroke="#8E8E8E" stroke-width="2.5" stroke-linecap="round"
-                                       stroke-linejoin="round" />
-                                    <br />
-                                    0
-                                 </svg>
-
-                              </div>
+                              
                            </div>
                            <div class="rmc--pvcomment-content">
                               buddy you're living my dream..
                               I hope I can experience this someday
                            </div>
                         </li>
-                     </ul>
+                     </ul>-->
                   </div>
                   <div class="rmc--photovideo-msgtool">
-                     <input type="text" placeholder="Add comments" />
-                     <button type="button" class="btn btn-primary-outline">Post</button>
+                     <?php if($this->session->userdata('id')) { ?>
+                    <input type="text" name="comment" placeholder="Add comments" />
+                     <button type="button" class="btn btn-primary-outline addcommentbtn">Post</button>
+                     <?php } else { ?>
+                        <div class="btnlogintocomment"><a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginModal">Please log in to comment</a></div>
+                        <?php } ?>
                   </div>
                </div>
             </div>
@@ -375,9 +349,28 @@
 <script>
    var baseurl = "<?php echo base_url(); ?>";
 </script>
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Server Error</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        There's an error while processing on the server, please try again later.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
 <script src="<?php echo base_url(); ?>public/assets/vendor/jquery/jquery-3.6.0.min.js"></script>
 <script src="<?php echo base_url(); ?>public/assets/vendor/bootstrap5/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>public/assets/vendor/optiscroll/optiscroll.min.js"></script>
+<script src="<?php echo base_url(); ?>public/assets/vendor/tagify/jQuery.tagify.min.js"></script>
 <script src="<?php echo base_url(); ?>public/assets/js/main.js"></script>
 </body>
 
